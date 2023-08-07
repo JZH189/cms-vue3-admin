@@ -7,10 +7,9 @@
       class="login-form"
     >
       <div class="flex text-white items-center py-4 title-wrap">
-        <span class="text-2xl flex-1 text-center title">
-          {{ $t("login.title") }}
-        </span>
-        <lang-select class="text-white! cursor-pointer" />
+        <span class="text-2xl flex-1 text-center title"
+          >vue3-element-admin</span
+        >
       </div>
 
       <el-form-item prop="username">
@@ -22,7 +21,7 @@
           v-model="loginData.username"
           class="flex-1"
           size="large"
-          :placeholder="$t('login.username')"
+          placeholder="用户名"
           name="username"
         />
       </el-form-item>
@@ -63,7 +62,7 @@
         <el-input
           v-model="loginData.verifyCode"
           auto-complete="off"
-          :placeholder="$t('login.verifyCode')"
+          placeholder="验证码"
           class="w-[60%]"
           @keyup.enter="handleLogin"
         />
@@ -79,13 +78,13 @@
         type="primary"
         class="w-full"
         @click.prevent="handleLogin"
-        >{{ $t("login.login") }}
+        >登录
       </el-button>
 
       <!-- 账号密码提示 -->
       <div class="mt-4 text-white text-sm">
-        <span>{{ $t("login.username") }}: admin</span>
-        <span class="ml-4"> {{ $t("login.password") }}: 123456</span>
+        <span> 用户名: admin</span>
+        <span class="ml-4"> 密码: 123456</span>
       </div>
     </el-form>
   </div>
@@ -93,7 +92,6 @@
 
 <script setup lang="ts">
 import router from "@/router";
-import LangSelect from "@/components/LangSelect/index.vue";
 import SvgIcon from "@/components/SvgIcon/index.vue";
 
 // 状态管理依赖

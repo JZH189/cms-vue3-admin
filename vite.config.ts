@@ -46,7 +46,7 @@ export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
         // 反向代理解决跨域
         [env.VITE_APP_BASE_API]: {
           target: "http://vapi.youlai.tech", // 线上接口地址
-          // target: 'http://localhost:8989',  // 本地接口地址 , 后端工程仓库地址：https://gitee.com/youlaiorg/youlai-boot
+          // target: 'http://localhost:8989',  // 本地接口地址
           changeOrigin: true,
           rewrite: (path) =>
             path.replace(new RegExp("^" + env.VITE_APP_BASE_API), ""), // 替换 /dev-api 为 target 接口地址
@@ -163,7 +163,6 @@ export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
         "echarts",
         "@wangeditor/editor",
         "@wangeditor/editor-for-vue",
-        "vue-i18n",
         "codemirror",
       ],
     },

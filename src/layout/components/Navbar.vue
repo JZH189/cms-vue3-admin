@@ -73,8 +73,6 @@ function logout() {
         <el-tooltip content="布局大小" effect="dark" placement="bottom">
           <size-select class="setting-item" />
         </el-tooltip>
-        <!--语言选择-->
-        <lang-select class="setting-item" />
       </div>
 
       <!-- 用户头像 -->
@@ -86,7 +84,7 @@ function logout() {
         <template #dropdown>
           <el-dropdown-menu>
             <router-link to="/">
-              <el-dropdown-item>{{ $t("navbar.dashboard") }}</el-dropdown-item>
+              <el-dropdown-item>首页</el-dropdown-item>
             </router-link>
             <a
               target="_blank"
@@ -95,17 +93,15 @@ function logout() {
               <el-dropdown-item>Github</el-dropdown-item>
             </a>
             <a target="_blank" href="https://gitee.com/haoxr">
-              <el-dropdown-item>{{ $t("navbar.gitee") }}</el-dropdown-item>
+              <el-dropdown-item>gitee</el-dropdown-item>
             </a>
             <a
               target="_blank"
               href="https://juejin.cn/post/7228990409909108793"
             >
-              <el-dropdown-item>{{ $t("navbar.document") }}</el-dropdown-item>
+              <el-dropdown-item>项目文档</el-dropdown-item>
             </a>
-            <el-dropdown-item divided @click="logout">
-              {{ $t("navbar.logout") }}
-            </el-dropdown-item>
+            <el-dropdown-item divided @click="logout">注销</el-dropdown-item>
           </el-dropdown-menu>
         </template>
       </el-dropdown>
