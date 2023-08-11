@@ -1,16 +1,8 @@
 <script setup lang="ts">
 import { useSettingsStore } from "@/store/modules/settings";
+import AppDarkMode from "@/layout/components/AppDarkMode/index.vue";
 
-import IconEpSunny from "~icons/ep/sunny";
-import IconEpMoon from "~icons/ep/moon";
-
-/**
- * 暗黑模式
- */
 const settingsStore = useSettingsStore();
-const isDark = useDark();
-const toggleDark = () => useToggle(isDark);
-
 /**
  * 切换布局
  */
@@ -48,15 +40,7 @@ onMounted(() => {
     <el-divider>主题</el-divider>
 
     <div class="flex justify-center" @click.stop>
-      <el-switch
-        v-model="isDark"
-        inline-prompt
-        :active-icon="IconEpMoon"
-        :inactive-icon="IconEpSunny"
-        active-color="var(--el-fill-color-dark)"
-        inactive-color="var(--el-color-primary)"
-        @change="toggleDark"
-      />
+      <AppDarkMode></AppDarkMode>
     </div>
 
     <el-divider>界面设置</el-divider>
