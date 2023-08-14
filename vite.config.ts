@@ -44,12 +44,9 @@ export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
       open: true, // 运行是否自动打开浏览器
       proxy: {
         // 反向代理解决跨域
-        [env.VITE_APP_BASE_API]: {
-          target: "http://vapi.youlai.tech", // 线上接口地址
-          // target: 'http://localhost:8989',  // 本地接口地址
+        "/api": {
+          target: "http://localhost:9528", // 本地接口地址
           changeOrigin: true,
-          rewrite: (path) =>
-            path.replace(new RegExp("^" + env.VITE_APP_BASE_API), ""), // 替换 /dev-api 为 target 接口地址
         },
       },
     },
@@ -58,7 +55,13 @@ export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
       UnoCSS({}),
       AutoImport({
         // 自动导入 Vue 相关函数，如：ref, reactive, toRef 等
-        imports: ["vue", "@vueuse/core"],
+        imports: [
+          "vue",
+          "@vueuse/core",
+          {
+            "vue-request": ["useRequest", "usePagination"],
+          },
+        ],
         eslintrc: {
           enabled: false,
           filepath: "./.eslintrc-auto-import.json",

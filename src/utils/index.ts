@@ -37,3 +37,7 @@ export function isExternal(path: string) {
   const isExternal = /^(https?:|http?:|mailto:|tel:)/.test(path);
   return isExternal;
 }
+
+export function isProdMode() {
+  return import.meta.env.MODE === "production";
+}

@@ -1,3 +1,11 @@
+export interface UserInfo {
+  userId: number;
+  nickname: string;
+  avatar: string;
+  roles: string[];
+  perms: string[];
+}
+
 /**
  * 登录请求参数
  */
@@ -26,22 +34,23 @@ export interface LoginData {
  * 登录响应
  */
 export interface LoginResult {
-  /**
-   * 访问token
-   */
-  accessToken?: string;
-  /**
-   * 过期时间(单位：毫秒)
-   */
-  expires?: number;
-  /**
-   * 刷新token
-   */
-  refreshToken?: string;
-  /**
-   * token 类型
-   */
-  tokenType?: string;
+  token?: string;
+}
+
+/**
+ * 用户头像
+ */
+export interface LoginInfo {
+  avatar: string;
+  username: string;
+}
+
+/**
+ * 用户权限
+ */
+export interface Permmenu {
+  menus: any[];
+  perms: string[];
 }
 
 /**
@@ -55,5 +64,5 @@ export interface CaptchaResult {
   /**
    * 验证码图片Base64字符串
    */
-  verifyCodeBase64: string;
+  verifyCode: string;
 }

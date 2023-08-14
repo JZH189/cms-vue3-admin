@@ -11,7 +11,6 @@ declare module "*.vue" {
 interface ImportMetaEnv {
   VITE_APP_TITLE: string;
   VITE_APP_PORT: string;
-  VITE_APP_BASE_API: string;
 }
 
 interface ImportMeta {

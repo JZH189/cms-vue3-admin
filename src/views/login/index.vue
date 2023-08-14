@@ -13,17 +13,17 @@
         <AppDarkMode></AppDarkMode>
       </div>
 
-      <el-form-item prop="username">
+      <el-form-item prop="account">
         <div class="p-2 text-white">
           <svg-icon icon-class="user" />
         </div>
         <el-input
-          ref="username"
-          v-model="loginData.username"
+          ref="account"
+          v-model="loginData.account"
           class="flex-1"
           size="large"
           placeholder="用户名"
-          name="username"
+          name="account"
         />
       </el-form-item>
 
@@ -95,14 +95,12 @@
 import router from "@/router";
 import SvgIcon from "@/components/SvgIcon/index.vue";
 import AppDarkMode from "@/layout/components/AppDarkMode/index.vue";
-
 // 状态管理依赖
 import { useUserStore } from "@/store/modules/user";
-
 // API依赖
 import { LocationQuery, LocationQueryValue, useRoute } from "vue-router";
-import { getCaptchaApi } from "@/api/auth";
-import { LoginData } from "@/api/auth/types";
+import { CaptchaResult, LoginData } from "@/types/account";
+import service from "@/utils/request";
 
 const userStore = useUserStore();
 const route = useRoute();
@@ -129,13 +127,15 @@ const captchaBase64 = ref();
  */
 const loginFormRef = ref(ElForm);
 
-const loginData = ref<LoginData>({
-  username: "admin",
+const loginData = reactive<LoginData>({
+  account: "admin",
   password: "123456",
+  captchaId: undefined,
+  verifyCode: undefined,
 });
 
 const loginRules = {
-  username: [{ required: true, trigger: "blur" }],
+  account: [{ required: true, trigger: "blur" }],
   password: [{ required: true, trigger: "blur", validator: passwordValidator }],
   verifyCode: [{ required: true, trigger: "blur" }],
 };
@@ -162,47 +162,47 @@ function checkCapslock(e: any) {
 /**
  * 获取验证码
  */
-function getCaptcha() {
-  getCaptchaApi().then(({ data }) => {
-    const { verifyCodeBase64, verifyCodeKey } = data;
-    loginData.value.verifyCodeKey = verifyCodeKey;
-    captchaBase64.value = verifyCodeBase64;
-  });
+async function getCaptcha() {
+  const { captchaId, verifyCode } = await service
+    .request<"", CaptchaResult>({
+      url: "/api/admin/sys/user/login/captcha",
+      method: "get",
+    })
+    .catch((err) => {
+      console.log("getCaptcha err:", err);
+    });
+  loginData.captchaId = captchaId;
+  captchaBase64.value = verifyCode;
 }
 
 /**
  * 登录
  */
 function handleLogin() {
-  loginFormRef.value.validate((valid: boolean) => {
+  loginFormRef.value.validate(async (valid: boolean) => {
     if (valid) {
-      loading.value = true;
-      userStore
-        .login(loginData.value)
-        .then(() => {
-          const query: LocationQuery = route.query;
-
-          const redirect = (query.redirect as LocationQueryValue) ?? "/";
-
-          const otherQueryParams = Object.keys(query).reduce(
-            (acc: any, cur: string) => {
-              if (cur !== "redirect") {
-                acc[cur] = query[cur];
-              }
-              return acc;
-            },
-            {}
-          );
-
-          router.push({ path: redirect, query: otherQueryParams });
-        })
-        .catch(() => {
-          // 验证失败，重新生成验证码
-          getCaptcha();
-        })
-        .finally(() => {
-          loading.value = false;
-        });
+      try {
+        loading.value = true;
+        await userStore.login(loginData);
+        const query: LocationQuery = route.query;
+        const redirect = (query.redirect as LocationQueryValue) ?? "/";
+        const otherQueryParams = Object.keys(query).reduce(
+          (acc: any, cur: string) => {
+            if (cur !== "redirect") {
+              acc[cur] = query[cur];
+            }
+            return acc;
+          },
+          {}
+        );
+        loading.value = false;
+        router.push({ path: redirect, query: otherQueryParams });
+      } catch (error) {
+        // 验证失败，重新生成验证码
+        getCaptcha();
+        loading.value = false;
+        console.log("error: ", error);
+      }
     }
   });
 }
@@ -298,3 +298,4 @@ onMounted(() => {
   }
 }
 </style>
+@/types/account
