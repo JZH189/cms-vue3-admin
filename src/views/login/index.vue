@@ -163,7 +163,7 @@ function checkCapslock(e: any) {
  */
 function getCaptcha() {
   API.get<CaptchaResult>({
-    url: "/api/admin/sys/user/login/captcha",
+    url: "/admin/sys/user/login/captcha",
   })
     .then((res) => {
       loginData.captchaId = res.captchaId;

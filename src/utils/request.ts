@@ -21,7 +21,7 @@ export default class Request {
   private instance: AxiosInstance;
   // 基础配置，url和超时时间
   private baseConfig: AxiosRequestConfig = {
-    baseURL: isProdMode() ? "" : import.meta.env.VITE_APP_BASE_API,
+    baseURL: isProdMode() ? import.meta.env.VITE_APP_BASE_API : "",
     timeout: 60000,
   };
 
