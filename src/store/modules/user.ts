@@ -25,12 +25,12 @@ export const useUserStore = defineStore("user", () => {
     return new Promise<void>(async (resolve, reject) => {
       try {
         const loginResult = await API.post<LoginResult>({
-          url: "/api/admin/sys/user/login",
+          url: "/admin/sys/user/login",
           data: loginData,
         });
         token.value = loginResult.token;
         const loginInfo = await API.get<LoginInfo>({
-          url: "/api/admin/sys/user/info",
+          url: "/admin/sys/user/info",
         });
         nickname.value = loginInfo.username;
         avatar.value = loginInfo.avatar;
@@ -47,7 +47,7 @@ export const useUserStore = defineStore("user", () => {
     return new Promise<Permmenu>(async (resolve, reject) => {
       try {
         const res = await API.get<Permmenu>({
-          url: "/api/admin/sys/user/permmenu",
+          url: "/admin/sys/user/permmenu",
         });
         menus.value = res.menus;
         perms.value = res.perms;
