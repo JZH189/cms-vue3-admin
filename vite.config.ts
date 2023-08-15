@@ -1,25 +1,22 @@
-import vue from "@vitejs/plugin-vue";
-
 import { UserConfig, ConfigEnv, loadEnv, defineConfig } from "vite";
-
+import vue from "@vitejs/plugin-vue";
+import Pages from "vite-plugin-pages";
+import Layouts from "vite-plugin-vue-layouts";
 import AutoImport from "unplugin-auto-import/vite";
 import Components from "unplugin-vue-components/vite";
 import { ElementPlusResolver } from "unplugin-vue-components/resolvers";
-
 import Icons from "unplugin-icons/vite";
 import IconsResolver from "unplugin-icons/resolver";
-
 import { createSvgIconsPlugin } from "vite-plugin-svg-icons";
-
 import UnoCSS from "unocss/vite";
 import path from "path";
-
 import viteCompression from "vite-plugin-compression";
 
 const pathSrc = path.resolve(__dirname, "src");
 
 export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
   const env = loadEnv(mode, process.cwd());
+  console.log("env: ", env);
   return {
     resolve: {
       alias: {
@@ -40,18 +37,28 @@ export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
     },
     server: {
       host: "0.0.0.0",
-      port: Number(env.VITE_APP_PORT),
+      port: 3001,
       open: true, // 运行是否自动打开浏览器
       proxy: {
         // 反向代理解决跨域
         "/api": {
-          target: "http://localhost:9528", // 本地接口地址
+          target: "http://localhost:7001", // 本地接口地址
           changeOrigin: true,
         },
       },
     },
     plugins: [
       vue(),
+      Pages({
+        dirs: "src/views", // 需要自动生成路由的文件目录
+        extensions: ["vue"], // 文件后缀
+        exclude: ["**/components/**"], // 排除的目录
+      }),
+      // 布局插件，设置一个公共文件，访问任何一个路由都会调用该文件
+      Layouts({
+        layoutsDirs: "src/layout",
+        defaultLayout: "index",
+      }),
       UnoCSS({}),
       AutoImport({
         // 自动导入 Vue 相关函数，如：ref, reactive, toRef 等
@@ -60,6 +67,7 @@ export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
           "@vueuse/core",
           {
             "vue-request": ["useRequest", "usePagination"],
+            "@/utils/request": ["API"],
           },
         ],
         eslintrc: {
@@ -77,7 +85,6 @@ export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
         dts: false,
         // dts: "src/types/auto-imports.d.ts",
       }),
-
       Components({
         resolvers: [
           // 自动导入 Element Plus 组件
@@ -94,12 +101,10 @@ export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
         dts: false,
         // dts: "src/types/components.d.ts",
       }),
-
       Icons({
         // 自动安装图标库
         autoInstall: true,
       }),
-
       createSvgIconsPlugin({
         // 指定需要缓存的图标文件夹
         iconDirs: [path.resolve(pathSrc, "assets/icons")],

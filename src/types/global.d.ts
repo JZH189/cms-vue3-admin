@@ -52,4 +52,6 @@ declare global {
     children?: OptionType[];
   }
 }
-export {};
+
+declare module "virtual:generated-layouts";
+declare module "virtual:generated-pages";

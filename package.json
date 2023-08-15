@@ -100,7 +100,9 @@
     "unplugin-vue-components": "^0.24.1",
     "vite": "^4.4.2",
     "vite-plugin-compression": "^0.5.1",
+    "vite-plugin-pages": "^0.31.0",
     "vite-plugin-svg-icons": "^2.0.1",
+    "vite-plugin-vue-layouts": "^0.8.0",
     "vue-tsc": "^1.6.5 "
   },
   "engines": {

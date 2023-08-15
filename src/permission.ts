@@ -1,12 +1,14 @@
 import router from "@/router";
 import { useUserStoreHook } from "@/store/modules/user";
 import { usePermissionStoreHook } from "@/store/modules/permission";
-
+// import { transformMenuToRoute } from "@/router/helper/routeHelper";
+import { MenuTypeEnum } from "@/enums/MenuTypeEnum";
 import NProgress from "nprogress";
 import "nprogress/nprogress.css";
-import { isUrl } from "./utils/is";
-import { warn } from "./utils/log";
-import { filter, listToTree } from "./utils/tree";
+import { isUrl } from "@/utils/is";
+import { warn } from "@/utils/log";
+import { filter, listToTree } from "@/utils/tree";
+
 NProgress.configure({ showSpinner: false }); // 进度条
 
 interface Menu {
@@ -21,23 +23,6 @@ interface Menu {
   isShow?: boolean;
   activeRouter?: string;
   children?: Menu[];
-}
-
-enum MenuTypeEnum {
-  /**
-   * 目录
-   */
-  Catalogue = 0,
-
-  /**
-   * 菜单
-   */
-  Menu = 1,
-
-  /**
-   * 权限
-   */
-  Permission = 2,
 }
 
 const permissionStore = usePermissionStoreHook();
@@ -69,23 +54,21 @@ router.beforeEach(async (to, from, next) => {
             if (menu.type === MenuTypeEnum.Permission) {
               return false;
             }
-
             if (!menu.router?.startsWith("/") && !isUrl(menu.router)) {
               warn(`此路由${menu.router}不合法，需以/或者合法的url开头。`);
               return false;
             }
-
             return true;
           };
           const { menus } = await userStore.getPermmenu();
           // 过滤不合法的路由，避免不合法路径导致vue-router进入死循环
           let menusTree = filter(menus, routeRemoveIllegalFilter);
-          console.log("menusTree: ", menusTree);
-
           // list to tree
           menusTree = listToTree(menusTree);
-          console.log("menusTree: ", menusTree);
-          // const accessRoutes = await permissionStore.generateRoutes(menus);
+          //转成真实路由对象
+          // const routerTree = transformMenuToRoute(menusTree, true);
+          // console.log("routerTree: ", JSON.stringify(routerTree));
+          // const accessRoutes = await permissionStore.generateRoutes(menusTree);
           // accessRoutes.forEach((route) => {
           //   router.addRoute(route);
           // });

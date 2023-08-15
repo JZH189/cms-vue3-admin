@@ -100,7 +100,6 @@ import { useUserStore } from "@/store/modules/user";
 // API依赖
 import { LocationQuery, LocationQueryValue, useRoute } from "vue-router";
 import { CaptchaResult, LoginData } from "@/types/account";
-import service from "@/utils/request";
 
 const userStore = useUserStore();
 const route = useRoute();
@@ -162,17 +161,17 @@ function checkCapslock(e: any) {
 /**
  * 获取验证码
  */
-async function getCaptcha() {
-  const { captchaId, verifyCode } = await service
-    .request<"", CaptchaResult>({
-      url: "/api/admin/sys/user/login/captcha",
-      method: "get",
+function getCaptcha() {
+  API.get<CaptchaResult>({
+    url: "/api/admin/sys/user/login/captcha",
+  })
+    .then((res) => {
+      loginData.captchaId = res.captchaId;
+      captchaBase64.value = res.verifyCode;
     })
     .catch((err) => {
       console.log("getCaptcha err:", err);
     });
-  loginData.captchaId = captchaId;
-  captchaBase64.value = verifyCode;
 }
 
 /**

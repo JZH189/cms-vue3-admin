@@ -24,18 +24,16 @@ export const useUserStore = defineStore("user", () => {
   async function login(loginData: LoginData) {
     return new Promise<void>(async (resolve, reject) => {
       try {
-        const loginResult = await request<LoginResult>({
+        const loginResult = await API.post<LoginResult>({
           url: "/api/admin/sys/user/login",
-          method: "post",
           data: loginData,
         });
-        token.value = loginResult.data.token;
-        const loginInfo = await request<LoginInfo>({
+        token.value = loginResult.token;
+        const loginInfo = await API.get<LoginInfo>({
           url: "/api/admin/sys/user/info",
-          method: "get",
         });
-        nickname.value = loginInfo.data.username;
-        avatar.value = loginInfo.data.avatar;
+        nickname.value = loginInfo.username;
+        avatar.value = loginInfo.avatar;
         resolve();
       } catch (error) {
         console.log("error: ", error);
@@ -48,13 +46,12 @@ export const useUserStore = defineStore("user", () => {
   function getPermmenu() {
     return new Promise<Permmenu>(async (resolve, reject) => {
       try {
-        const { data } = await request<Permmenu>({
+        const res = await API.get<Permmenu>({
           url: "/api/admin/sys/user/permmenu",
-          method: "get",
         });
-        menus.value = data.menus;
-        perms.value = data.perms;
-        resolve(data);
+        menus.value = res.menus;
+        perms.value = res.perms;
+        resolve(res);
       } catch (error) {
         reject(error);
       }
