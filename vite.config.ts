@@ -1,7 +1,5 @@
 import { UserConfig, ConfigEnv, loadEnv, defineConfig } from "vite";
 import vue from "@vitejs/plugin-vue";
-import Pages from "vite-plugin-pages";
-import Layouts from "vite-plugin-vue-layouts";
 import AutoImport from "unplugin-auto-import/vite";
 import Components from "unplugin-vue-components/vite";
 import { ElementPlusResolver } from "unplugin-vue-components/resolvers";
@@ -49,16 +47,6 @@ export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
     },
     plugins: [
       vue(),
-      Pages({
-        dirs: "src/views", // 需要自动生成路由的文件目录
-        extensions: ["vue"], // 文件后缀
-        exclude: ["**/components/**"], // 排除的目录
-      }),
-      // 布局插件，设置一个公共文件，访问任何一个路由都会调用该文件
-      Layouts({
-        layoutsDirs: "src/layout",
-        defaultLayout: "index",
-      }),
       UnoCSS({}),
       AutoImport({
         // 自动导入 Vue 相关函数，如：ref, reactive, toRef 等

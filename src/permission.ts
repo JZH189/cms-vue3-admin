@@ -65,6 +65,7 @@ router.beforeEach(async (to, from, next) => {
           let menusTree = filter(menus, routeRemoveIllegalFilter);
           // list to tree
           menusTree = listToTree(menusTree);
+          console.log('menusTree: ', menusTree);
           //转成真实路由对象
           // const routerTree = transformMenuToRoute(menusTree, true);
           // console.log("routerTree: ", JSON.stringify(routerTree));
