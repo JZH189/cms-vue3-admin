@@ -1,7 +1,6 @@
 import router from "@/router";
 import { useUserStoreHook } from "@/store/modules/user";
-import { usePermissionStoreHook } from "@/store/modules/permission";
-// import { transformMenuToRoute } from "@/router/helper/routeHelper";
+import { transformMenuToRoute } from "@/router/helper";
 import { MenuTypeEnum } from "@/enums/MenuTypeEnum";
 import NProgress from "nprogress";
 import "nprogress/nprogress.css";
@@ -24,8 +23,6 @@ interface Menu {
   activeRouter?: string;
   children?: Menu[];
 }
-
-const permissionStore = usePermissionStoreHook();
 
 // 白名单路由
 const whiteList = ["/login"];
@@ -65,14 +62,14 @@ router.beforeEach(async (to, from, next) => {
           let menusTree = filter(menus, routeRemoveIllegalFilter);
           // list to tree
           menusTree = listToTree(menusTree);
-          console.log('menusTree: ', menusTree);
+          console.log("menusTree: ", JSON.stringify(menusTree));
           //转成真实路由对象
-          // const routerTree = transformMenuToRoute(menusTree, true);
-          // console.log("routerTree: ", JSON.stringify(routerTree));
-          // const accessRoutes = await permissionStore.generateRoutes(menusTree);
-          // accessRoutes.forEach((route) => {
-          //   router.addRoute(route);
-          // });
+          const asyncRoutes = transformMenuToRoute(menusTree);
+          console.log("asyncRoutes: ", JSON.stringify(asyncRoutes));
+          asyncRoutes.forEach((route) => {
+            router.addRoute(route);
+          });
+          router.getRoutes()
           next({ ...to, replace: true });
         } catch (error) {
           // 移除 token 并跳转登录页
