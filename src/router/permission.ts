@@ -69,7 +69,7 @@ router.beforeEach(async (to, from, next) => {
           asyncRoutes.forEach((route) => {
             router.addRoute(route);
           });
-          router.getRoutes()
+          router.getRoutes();
           next({ ...to, replace: true });
         } catch (error) {
           // 移除 token 并跳转登录页

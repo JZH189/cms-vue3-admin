@@ -1,4 +1,3 @@
-import request from "@/utils/request";
 import { defineStore } from "pinia";
 import { logoutApi } from "@/api/auth";
 import { resetRouter } from "@/router";
@@ -47,7 +46,8 @@ export const useUserStore = defineStore("user", () => {
     return new Promise<Permmenu>(async (resolve, reject) => {
       try {
         const res = await API.get<Permmenu>({
-          url: "/admin/sys/user/permmenu",
+          // url: "/admin/sys/user/permmenu",
+          url: "/api/permmenu",
         });
         menus.value = res.menus;
         perms.value = res.perms;

@@ -9,10 +9,12 @@ import { createSvgIconsPlugin } from "vite-plugin-svg-icons";
 import UnoCSS from "unocss/vite";
 import path from "path";
 import viteCompression from "vite-plugin-compression";
+import { viteMockServe } from "vite-plugin-mock";
 
 const pathSrc = path.resolve(__dirname, "src");
 
 export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
+  console.log("mode: ", mode);
   const env = loadEnv(mode, process.cwd());
   console.log("env: ", env);
   return {
@@ -106,6 +108,16 @@ export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
         threshold: 10240, // 压缩前最小文件大小
         algorithm: "gzip", // 压缩算法
         ext: ".gz", // 文件类型
+      }),
+      // 模拟数据
+      viteMockServe({
+        mockPath: "mock/api",
+        localEnabled: mode === "development",
+        prodEnabled: false,
+        injectCode: `
+      import { setupProdMockServer } from '../mock';
+      setupProdMockServer();
+    `,
       }),
     ],
     // 预加载项目必需的组件

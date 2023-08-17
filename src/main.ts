@@ -5,7 +5,7 @@ import { setupStore } from "@/store";
 import { setupDirective } from "@/directive";
 import { setGlobalOptions } from "vue-request";
 
-import "@/permission";
+import "@/router/permission";
 
 // 本地SVG图标
 import "virtual:svg-icons-register";
