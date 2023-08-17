@@ -38,9 +38,8 @@ export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
       port: 3001,
       open: true, // 运行是否自动打开浏览器
       proxy: {
-        // 反向代理解决跨域
         "/admin": {
-          target: "http://localhost:7001", // 本地接口地址
+          target: "http://0.0.0.0:7001", // 本地接口地址
           changeOrigin: true,
         },
       },
