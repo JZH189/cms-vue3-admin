@@ -17,4 +17,5 @@ export interface Menu {
   isShow?: boolean;
   activeRouter?: string;
   children?: Menu[];
+  component?: Component;
 }

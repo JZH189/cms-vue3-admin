@@ -1,8 +1,10 @@
-import { RouteMeta, RouteRecordRaw } from 'vue-router';
-import { Menu } from './typing';
-import { isUrl } from '@/utils/is';
-import { MenuTypeEnum } from '@/enums/MenuTypeEnum';
-import { Layout } from './index'
+import { RouteMeta, RouteRecordRaw } from "vue-router";
+import { Menu } from "./typing";
+import { isUrl } from "@/utils/is";
+import { MenuTypeEnum } from "@/enums/MenuTypeEnum";
+import { Layout } from "./index";
+
+const modules = import.meta.glob("@/views/**/**.vue");
 
 export function transformMenuToRoute(menus: Menu[]): RouteRecordRaw[] {
   return menus.map((menu): RouteRecordRaw => {
@@ -51,12 +53,15 @@ export function transformMenuToRoute(menus: Menu[]): RouteRecordRaw[] {
       };
     }
 
-    // 子菜单
-    return {
-      path: menu.router,
+    //菜单
+    const route: RouteRecordRaw = {
       name: menu.router,
-      component: () => `${menu.router}/index`,
+      path: menu.router,
+      component:
+        modules[`@/views${menu.router}/index.vue`] ??
+        modules[`@/views/error-page/404.vue`],
       meta,
     };
+    return route;
   });
 }

@@ -65,11 +65,11 @@ router.beforeEach(async (to, from, next) => {
           console.log("menusTree: ", JSON.stringify(menusTree));
           //转成真实路由对象
           const asyncRoutes = transformMenuToRoute(menusTree);
-          console.log("asyncRoutes: ", JSON.stringify(asyncRoutes));
+          console.log("转成真实路由对象asyncRoutes: ", asyncRoutes);
           asyncRoutes.forEach((route) => {
             router.addRoute(route);
           });
-          router.getRoutes();
+          console.log("router.getRoutes(): ", router.getRoutes());
           next({ ...to, replace: true });
         } catch (error) {
           // 移除 token 并跳转登录页
