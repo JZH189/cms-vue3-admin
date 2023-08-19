@@ -14,6 +14,7 @@ const permissionStore = usePermissionStore();
 const appStore = useAppStore();
 const currRoute = useRoute();
 const { sidebarLogo } = storeToRefs(settingsStore);
+console.log('permissionStore.routes: ', JSON.stringify(permissionStore.routes));
 </script>
 
 <template>
@@ -26,7 +27,7 @@ const { sidebarLogo } = storeToRefs(settingsStore);
         :background-color="variables.menuBg"
         :text-color="variables.menuText"
         :active-text-color="variables.menuActiveText"
-        :unique-opened="false"
+        :unique-opened="true"
         :collapse-transition="false"
         mode="vertical"
       >

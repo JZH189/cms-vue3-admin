@@ -3,8 +3,6 @@ import path from "path-browserify";
 import { isExternal } from "@/utils/index";
 import AppLink from "./Link.vue";
 
-import SvgIcon from "@/components/SvgIcon/index.vue";
-
 const props = defineProps({
   /**
    * 路由(eg:level_3_1)
@@ -86,10 +84,12 @@ function resolvePath(routePath: string) {
     >
       <app-link v-if="onlyOneChild.meta" :to="resolvePath(onlyOneChild.path)">
         <el-menu-item :index="resolvePath(onlyOneChild.path)">
-          <svg-icon
-            v-if="onlyOneChild.meta && onlyOneChild.meta.icon"
-            :icon-class="onlyOneChild.meta.icon"
-          />
+           <!-- do not use el-icon wrap -->
+          <i
+            v-if="item.meta && item.icon"
+            class="text-lg flex-shrink-0"
+            :class="`i-${item.meta.icon}`"
+          ></i>
           <template #title>
             {{ onlyOneChild.meta.title }}
           </template>
@@ -100,10 +100,12 @@ function resolvePath(routePath: string) {
     <!-- 包含多个子路由  -->
     <el-sub-menu v-else :index="resolvePath(item.path)" teleported>
       <template #title>
-        <svg-icon
-          v-if="item.meta && item.meta.icon"
-          :icon-class="item.meta.icon"
-        />
+        <!-- do not use el-icon wrap -->
+        <i
+          v-if="item.meta && item.icon"
+          class="text-lg flex-shrink-0"
+          :class="`i-${item.meta.icon}`"
+        ></i>
         <span v-if="item.meta && item.meta.title">{{ item.meta.title }}</span>
       </template>
 

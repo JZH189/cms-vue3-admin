@@ -14,7 +14,7 @@ export default [
               name: "系统管理",
               orderNum: 0,
               parentId: 0,
-              router: "/sys",
+              router: "/system",
               type: 0,
               viewPath: "",
             },

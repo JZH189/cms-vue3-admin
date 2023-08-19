@@ -7,6 +7,9 @@ import "nprogress/nprogress.css";
 import { isUrl } from "@/utils/is";
 import { warn } from "@/utils/log";
 import { filter, listToTree } from "@/utils/tree";
+import { usePermissionStoreHook } from "@/store/modules/permission";
+
+const permissionStore = usePermissionStoreHook();
 
 NProgress.configure({ showSpinner: false }); // 进度条
 
@@ -62,14 +65,13 @@ router.beforeEach(async (to, from, next) => {
           let menusTree = filter(menus, routeRemoveIllegalFilter);
           // list to tree
           menusTree = listToTree(menusTree);
-          console.log("menusTree: ", JSON.stringify(menusTree));
           //转成真实路由对象
           const asyncRoutes = transformMenuToRoute(menusTree);
-          console.log("转成真实路由对象asyncRoutes: ", asyncRoutes);
+          //保存路由信息
+          permissionStore.setRoutes(asyncRoutes);
           asyncRoutes.forEach((route) => {
             router.addRoute(route);
           });
-          console.log("router.getRoutes(): ", router.getRoutes());
           next({ ...to, replace: true });
         } catch (error) {
           // 移除 token 并跳转登录页
