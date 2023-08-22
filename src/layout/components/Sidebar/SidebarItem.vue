@@ -84,7 +84,7 @@ function resolvePath(routePath: string) {
     >
       <app-link v-if="onlyOneChild.meta" :to="resolvePath(onlyOneChild.path)">
         <el-menu-item :index="resolvePath(onlyOneChild.path)">
-           <!-- do not use el-icon wrap -->
+          <!-- do not use el-icon wrap -->
           <i
             v-if="item.meta && item.icon"
             class="text-lg flex-shrink-0"
