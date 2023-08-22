@@ -88,7 +88,7 @@ function resolvePath(routePath: string) {
           <i
             v-if="item.meta && item.icon"
             class="text-lg flex-shrink-0"
-            :class="`i-${item.meta.icon}`"
+            :class="`${item.meta.icon}`"
           ></i>
           <template #title>
             {{ onlyOneChild.meta.title }}
@@ -104,7 +104,7 @@ function resolvePath(routePath: string) {
         <i
           v-if="item.meta && item.icon"
           class="text-lg flex-shrink-0"
-          :class="`i-${item.meta.icon}`"
+          :class="`${item.meta.icon}`"
         ></i>
         <span v-if="item.meta && item.meta.title">{{ item.meta.title }}</span>
       </template>
