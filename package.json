@@ -71,6 +71,7 @@
     "@types/xlsx": "^0.0.36",
     "@typescript-eslint/eslint-plugin": "^5.59.6",
     "@typescript-eslint/parser": "^5.59.6",
+    "@unocss/preset-icons": "^0.55.2",
     "autoprefixer": "^10.4.14",
     "commitizen": "^4.3.0",
     "cz-git": "^1.6.1",

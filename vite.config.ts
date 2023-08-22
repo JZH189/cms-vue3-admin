@@ -48,7 +48,8 @@ export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
     },
     plugins: [
       vue(),
-      UnoCSS({}),
+      //css原子化
+      UnoCSS(),
       AutoImport({
         // 自动导入 Vue 相关函数，如：ref, reactive, toRef 等
         imports: [
