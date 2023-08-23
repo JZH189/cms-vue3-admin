@@ -15,23 +15,27 @@ export const constantRoutes: RouteRecordRaw[] = [
       },
     ],
   },
-
   {
     path: "/login",
     component: () => import("@/views/login/index.vue"),
     meta: { hidden: true },
   },
-
   {
     path: "/",
     component: Layout,
+    meta: { hidden: false },
     redirect: "/dashboard",
     children: [
       {
         path: "dashboard",
         component: () => import("@/views/dashboard/index.vue"),
         name: "Dashboard",
-        meta: { title: "工作台", icon: "carbon:settings", affix: true },
+        meta: {
+          title: "工作台",
+          icon: "carbon:dashboard",
+          affix: true,
+          hidden: false,
+        },
       },
       {
         path: "401",
@@ -45,7 +49,6 @@ export const constantRoutes: RouteRecordRaw[] = [
       },
     ],
   },
-
   // 外部链接
   /*{
         path: '/external-link',

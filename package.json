@@ -42,7 +42,7 @@
   },
   "dependencies": {
     "@vitejs/plugin-vue": "^4.2.3",
-    "@vueuse/core": "^10.1.2",
+    "@vueuse/core": "^10.3.0",
     "@wangeditor/editor": "^5.1.23",
     "@wangeditor/editor-for-vue": "5.1.10",
     "axios": "^1.4.0",
@@ -63,7 +63,8 @@
   "devDependencies": {
     "@commitlint/cli": "^17.6.3",
     "@commitlint/config-conventional": "^17.6.3",
-    "@iconify-json/ep": "^1.1.10",
+    "@iconify-json/carbon": "^1.1.20",
+    "@iconify-json/ep": "^1.1.12",
     "@types/codemirror": "^5.60.7",
     "@types/lodash": "^4.14.195",
     "@types/nprogress": "^0.2.0",

@@ -3,57 +3,51 @@ import path from "path-browserify";
 import { isExternal } from "@/utils/index";
 import AppLink from "./Link.vue";
 
-const props = defineProps({
-  /**
-   * 路由(eg:level_3_1)
-   */
-  item: {
-    type: Object,
-    required: true,
-  },
+interface Imeta {
+  title: string;
+  icon?: string;
+  hidden: boolean;
+  keepAlive?: boolean;
+}
 
-  /**
-   * 父层级完整路由路径(eg:/level/level_3/level_3_1)
-   */
-  basePath: {
-    type: String,
-    required: true,
-  },
-});
+interface Imenu {
+  name?: string;
+  path: string;
+  meta: Imeta;
+  component: any;
+  children: Imenu[];
+  redirect?: string;
+}
 
-const onlyOneChild = ref(); // 临时变量，唯一子路由
+const props = defineProps<{
+  item: Imenu;
+  basePath: string;
+}>();
+
+const currentRoute = ref(); // 临时变量，唯一子路由
 
 /**
- * 判断当前路由是否只有一个子路由
- *
- * 1：如果只有一个子路由： 返回 true
- * 2：如果无子路由 ：返回 true
- *
+ * 判断当前路由是否只有一个子路由显示
  * @param children 子路由数组
  * @param parent 当前路由
  */
-function hasOneShowingChild(children = [], parent: any) {
+function justOneShowingChild(children: Imenu[], parent: any) {
   // 需要显示的子路由数组
-  const showingChildren = children.filter((item: any) => {
-    if (item.meta?.hidden) {
-      return false; // 过滤不显示的子路由
-    } else {
-      onlyOneChild.value = item; // 唯一子路由赋值（多个子路由情况 onlyOneChild 变量是用不上的）
-      return true;
-    }
-  });
+  const showingChildren =
+    children &&
+    children.filter((item: Imenu) => {
+      return item.meta.hidden === false;
+    });
 
-  // 1：如果只有一个子路由, 返回 true
-  if (showingChildren.length === 1) {
-    return true;
+  //含有多个children
+  if (showingChildren?.length > 1) return false;
+
+  //如果只有一个子路由返回唯一子路由
+  if (showingChildren?.length === 1) {
+    return (currentRoute.value = showingChildren[0]);
   }
 
-  // 2：如果无子路由, 复制当前路由信息作为其子路由，满足只拥有一个子路由的条件，所以返回 true
-  if (showingChildren.length === 0) {
-    onlyOneChild.value = { ...parent, path: "", noShowingChildren: true };
-    return true;
-  }
-  return false;
+  return (currentRoute.value = { ...parent });
 }
 
 /**
@@ -74,24 +68,18 @@ function resolvePath(routePath: string) {
 }
 </script>
 <template>
-  <div v-if="!item.meta || !item.meta.hidden">
+  <div v-if="item.meta && !item.meta.hidden">
     <!-- 只包含一个子路由节点的路由，显示其【唯一子路由】 -->
-    <template
-      v-if="
-        hasOneShowingChild(item.children, item) &&
-        (!onlyOneChild.children || onlyOneChild.noShowingChildren)
-      "
-    >
-      <app-link v-if="onlyOneChild.meta" :to="resolvePath(onlyOneChild.path)">
-        <el-menu-item :index="resolvePath(onlyOneChild.path)">
-          <!-- do not use el-icon wrap -->
-          <i
-            v-if="item.meta && item.icon"
-            class="text-lg flex-shrink-0"
-            :class="`${item.meta.icon}`"
-          ></i>
+    <template v-if="justOneShowingChild(item.children, item)">
+      <app-link v-if="currentRoute.meta" :to="resolvePath(currentRoute.path)">
+        <el-menu-item :index="resolvePath(currentRoute.path)">
           <template #title>
-            {{ onlyOneChild.meta.title }}
+            <span
+              v-if="currentRoute.meta?.icon"
+              m-r-2
+              :class="`i-${currentRoute.meta.icon}`"
+            ></span>
+            {{ currentRoute.meta.title }}
           </template>
         </el-menu-item>
       </app-link>
@@ -100,12 +88,11 @@ function resolvePath(routePath: string) {
     <!-- 包含多个子路由  -->
     <el-sub-menu v-else :index="resolvePath(item.path)" teleported>
       <template #title>
-        <!-- do not use el-icon wrap -->
-        <i
-          v-if="item.meta && item.icon"
-          class="text-lg flex-shrink-0"
-          :class="`${item.meta.icon}`"
-        ></i>
+        <span
+          v-if="item.meta?.icon"
+          :class="`i-${item.meta.icon}`"
+          m-r-2
+        ></span>
         <span v-if="item.meta && item.meta.title">{{ item.meta.title }}</span>
       </template>
 

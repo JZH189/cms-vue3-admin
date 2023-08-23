@@ -19,15 +19,21 @@ export default defineConfig({
     "types",
   ],
   presets: [
-    presetUno(),
     presetAttributify(),
     presetIcons({
-      // icon图标：https://icones.js.org/collection/ri 和 https://icones.js.org/collection/mdi
+      prefix: "i-",
+      // icon图标：https://icones.js.org/collection/carbon
       // 如需要用其他类别的图标，比如这个https://icones.js.org/collection/bi，直接运行npm install @iconify-json/bi -D即可
       extraProperties: {
         display: "inline-block",
-        "vertical-align": "middle",
+        overflow: "hidden",
+        width: "1em",
+        height: "1em",
+        "vertical-align": "-0.15em",
       },
+    }),
+    presetUno({
+      dark: "class",
     }),
   ],
   shortcuts: [

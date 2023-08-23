@@ -1,19 +1,17 @@
 import { createApp } from "vue";
+import "@/router/permission";
+
+// 本地SVG图标
+import "virtual:svg-icons-register";
+// 样式
+import "element-plus/theme-chalk/dark/css-vars.css";
+import "@/styles/index.scss";
+import "uno.css";
 import App from "./App.vue";
 import router from "@/router";
 import { setupStore } from "@/store";
 import { setupDirective } from "@/directive";
 import { setGlobalOptions } from "vue-request";
-
-import "@/router/permission";
-
-// 本地SVG图标
-import "virtual:svg-icons-register";
-
-// 样式
-import "element-plus/theme-chalk/dark/css-vars.css";
-import "@/styles/index.scss";
-import "uno.css";
 
 //vue-request 全局配置
 setGlobalOptions({

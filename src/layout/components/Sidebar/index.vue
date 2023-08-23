@@ -14,7 +14,6 @@ const permissionStore = usePermissionStore();
 const appStore = useAppStore();
 const currRoute = useRoute();
 const { sidebarLogo } = storeToRefs(settingsStore);
-console.log('permissionStore.routes: ', JSON.stringify(permissionStore.routes));
 </script>
 
 <template>
@@ -34,7 +33,7 @@ console.log('permissionStore.routes: ', JSON.stringify(permissionStore.routes));
         <sidebar-item
           v-for="route in permissionStore.routes"
           :key="route.path"
-          :item="route"
+          :item="route as any"
           :base-path="route.path"
           :is-collapse="!appStore.sidebar.opened"
         />

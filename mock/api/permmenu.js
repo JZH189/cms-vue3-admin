@@ -20,7 +20,7 @@ export default [
             },
             {
               activeRouter: "",
-              icon: "",
+              icon: "carbon:grid",
               id: 2,
               isShow: 1,
               name: "菜单管理",
@@ -32,7 +32,7 @@ export default [
             },
             {
               activeRouter: "",
-              icon: "",
+              icon: "carbon:dashboard",
               id: 7,
               isShow: 1,
               name: "角色管理",
@@ -44,7 +44,7 @@ export default [
             },
             {
               activeRouter: "",
-              icon: "",
+              icon: "carbon:dashboard",
               id: 12,
               isShow: 1,
               name: "系统用户",
@@ -56,7 +56,7 @@ export default [
             },
             {
               activeRouter: "",
-              icon: "ic:baseline-history",
+              icon: "carbon:dashboard",
               id: 18,
               isShow: 1,
               name: "日志管理",
@@ -68,7 +68,7 @@ export default [
             },
             {
               activeRouter: "",
-              icon: "",
+              icon: "carbon:dashboard",
               id: 19,
               isShow: 1,
               name: "登录日志",
