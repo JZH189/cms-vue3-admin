@@ -30,6 +30,41 @@ interface Menu {
 // 白名单路由
 const whiteList = ["/login"];
 
+/**
+ * 过滤无效路由
+ * @param menu
+ * @returns
+ */
+function routeRemoveIllegalFilter(menu: Menu): boolean {
+  if (menu.type === MenuTypeEnum.Permission) {
+    return false;
+  }
+  if (!menu.router?.startsWith("/") && !isUrl(menu.router)) {
+    warn(`此路由${menu.router}不合法，需以/或者合法的url开头。`);
+    return false;
+  }
+  return true;
+}
+
+/**
+ * 获取权限路由
+ * @param userStore
+ */
+async function getAsyncRoute(userStore: any) {
+  const { menus } = await userStore.getPermmenu();
+  // 过滤不合法的路由，避免不合法路径导致vue-router进入死循环
+  let menusTree = filter(menus, routeRemoveIllegalFilter);
+  // list to tree
+  menusTree = listToTree(menusTree);
+  //转成真实路由对象
+  const asyncRoutes = transformMenuToRoute(menusTree);
+  //保存路由信息
+  permissionStore.setRoutes(asyncRoutes);
+  asyncRoutes.forEach((route) => {
+    router.addRoute(route);
+  });
+}
+
 router.beforeEach(async (to, from, next) => {
   NProgress.start();
   const hasToken = localStorage.getItem("accessToken");
@@ -42,6 +77,7 @@ router.beforeEach(async (to, from, next) => {
       const userStore = useUserStoreHook();
       const hasMenus = userStore.menus && userStore.menus.length > 0;
       if (hasMenus) {
+        await getAsyncRoute(userStore);
         // 未匹配到任何路由，跳转404
         if (to.matched.length === 0) {
           from.name ? next({ name: from.name }) : next("/404");
@@ -50,28 +86,7 @@ router.beforeEach(async (to, from, next) => {
         }
       } else {
         try {
-          const routeRemoveIllegalFilter = (menu: Menu): boolean => {
-            if (menu.type === MenuTypeEnum.Permission) {
-              return false;
-            }
-            if (!menu.router?.startsWith("/") && !isUrl(menu.router)) {
-              warn(`此路由${menu.router}不合法，需以/或者合法的url开头。`);
-              return false;
-            }
-            return true;
-          };
-          const { menus } = await userStore.getPermmenu();
-          // 过滤不合法的路由，避免不合法路径导致vue-router进入死循环
-          let menusTree = filter(menus, routeRemoveIllegalFilter);
-          // list to tree
-          menusTree = listToTree(menusTree);
-          //转成真实路由对象
-          const asyncRoutes = transformMenuToRoute(menusTree);
-          //保存路由信息
-          permissionStore.setRoutes(asyncRoutes);
-          asyncRoutes.forEach((route) => {
-            router.addRoute(route);
-          });
+          await getAsyncRoute(userStore);
           next({ ...to, replace: true });
         } catch (error) {
           // 移除 token 并跳转登录页
