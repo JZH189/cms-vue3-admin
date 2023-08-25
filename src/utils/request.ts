@@ -53,7 +53,7 @@ export default class Request {
   private httpInterceptorsResponse() {
     this.instance.interceptors.response.use(
       (response: AxiosResponse) => {
-        const { code, message } = response.data;
+        const { code, msg } = response.data;
         // 响应数据为二进制流处理
         if (response.data instanceof ArrayBuffer) {
           return response;
@@ -72,8 +72,8 @@ export default class Request {
           });
           return Promise.reject(new Error("授权已失效"));
         }
-        ElMessage.error(message);
-        return Promise.reject(new Error(message));
+        ElMessage.error(msg);
+        return Promise.reject(new Error(msg));
       },
       (error: AxiosError) => {
         // 当响应异常时做一些处理
@@ -83,7 +83,7 @@ export default class Request {
               error.message = "请求错误(400)";
               break;
             case 401:
-              error.message = "未授权，请重新登录(401)";
+              error.message = "授权已失效，请重新登录(401)";
               break;
             case 403:
               error.message = "拒绝访问(403)";
