@@ -32,7 +32,7 @@ export const constantRoutes: RouteRecordRaw[] = [
         name: "Dashboard",
         meta: {
           title: "工作台",
-          icon: "carbon:dashboard",
+          icon: "carbon:data-volume",
           affix: true,
           hidden: false,
         },
@@ -55,7 +55,7 @@ export const constantRoutes: RouteRecordRaw[] = [
         component: Layout,
         children: [
             {
-                path: 'https://www.cnblogs.com/haoxianrui/',
+                path: 'https://www.baidu.com/',
                 meta: { title: '外部链接', icon: 'link' }
             }
         ]

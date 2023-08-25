@@ -8,12 +8,13 @@ import { usePermissionStore } from "@/store/modules/permission";
 import { useAppStore } from "@/store/modules/app";
 import { storeToRefs } from "pinia";
 import variables from "@/styles/variables.module.scss";
-
+import safeIcon from "@/const/safeIcon";
 const settingsStore = useSettingsStore();
 const permissionStore = usePermissionStore();
 const appStore = useAppStore();
 const currRoute = useRoute();
 const { sidebarLogo } = storeToRefs(settingsStore);
+const safeIcons = [...safeIcon];
 </script>
 
 <template>

@@ -8,7 +8,7 @@ export default [
           menus: [
             {
               activeRouter: "",
-              icon: "carbon:settings",
+              icon: "carbon:cics-system-group",
               id: 1,
               isShow: 1,
               name: "系统管理",
@@ -32,7 +32,7 @@ export default [
             },
             {
               activeRouter: "",
-              icon: "carbon:dashboard",
+              icon: "carbon:user-role",
               id: 7,
               isShow: 1,
               name: "角色管理",
@@ -44,7 +44,7 @@ export default [
             },
             {
               activeRouter: "",
-              icon: "carbon:dashboard",
+              icon: "carbon:user",
               id: 12,
               isShow: 1,
               name: "系统用户",
@@ -56,7 +56,7 @@ export default [
             },
             {
               activeRouter: "",
-              icon: "carbon:dashboard",
+              icon: "carbon:catalog",
               id: 18,
               isShow: 1,
               name: "日志管理",
@@ -68,7 +68,7 @@ export default [
             },
             {
               activeRouter: "",
-              icon: "carbon:dashboard",
+              icon: "carbon:align-box-middle-right",
               id: 19,
               isShow: 1,
               name: "登录日志",
