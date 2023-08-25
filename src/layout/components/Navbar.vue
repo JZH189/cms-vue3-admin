@@ -1,17 +1,15 @@
 <script setup lang="ts">
 import { storeToRefs } from "pinia";
-import { useRoute, useRouter } from "vue-router";
+import { useRouter } from "vue-router";
 import { useAppStore } from "@/store/modules/app";
 import { useTagsViewStore } from "@/store/modules/tagsView";
 import { useUserStore } from "@/store/modules/user";
+import { resetRouter } from "@/router";
 
 const appStore = useAppStore();
 const tagsViewStore = useTagsViewStore();
 const userStore = useUserStore();
-
-const route = useRoute();
 const router = useRouter();
-
 const { device } = storeToRefs(appStore); // 设备类型：desktop-宽屏设备 || mobile-窄屏设备
 
 /**
@@ -27,10 +25,10 @@ function toggleSideBar() {
 const { isFullscreen, toggle } = useFullscreen();
 
 /**
- * 注销
+ * 退出登录
  */
 function logout() {
-  ElMessageBox.confirm("确定注销并退出系统吗？", "提示", {
+  ElMessageBox.confirm("确定退出登录吗？", "提示", {
     confirmButtonText: "确定",
     cancelButtonText: "取消",
     type: "warning",
@@ -40,8 +38,10 @@ function logout() {
       .then(() => {
         tagsViewStore.delAllViews();
       })
-      .then(() => {
-        router.push(`/login?redirect=${route.fullPath}`);
+      .catch(() => {
+        resetRouter();
+        userStore.resetToken();
+        router.replace(`/login`);
       });
   });
 }
@@ -78,7 +78,7 @@ function logout() {
       <!-- 用户头像 -->
       <el-dropdown trigger="click">
         <div class="avatar-container">
-          <img :src="userStore.avatar + '?imageView2/1/w/80/h/80'" />
+          <img :src="userStore.avatar" />
           <i-ep-caret-bottom class="w-3 h-3" />
         </div>
         <template #dropdown>
@@ -86,22 +86,9 @@ function logout() {
             <router-link to="/">
               <el-dropdown-item>首页</el-dropdown-item>
             </router-link>
-            <a
-              target="_blank"
-              href="https://github.com/youlaitech/vue3-element-admin"
+            <el-dropdown-item divided @click="logout"
+              >退出登录</el-dropdown-item
             >
-              <el-dropdown-item>Github</el-dropdown-item>
-            </a>
-            <a target="_blank" href="https://gitee.com/haoxr">
-              <el-dropdown-item>gitee</el-dropdown-item>
-            </a>
-            <a
-              target="_blank"
-              href="https://juejin.cn/post/7228990409909108793"
-            >
-              <el-dropdown-item>项目文档</el-dropdown-item>
-            </a>
-            <el-dropdown-item divided @click="logout">注销</el-dropdown-item>
           </el-dropdown-menu>
         </template>
       </el-dropdown>
