@@ -7,10 +7,99 @@
     <meta name="description" content="vue-element-admin的vue3版本" />
     <meta name="keywords" content="vue-element-admin,vue3-element-admin" />
     <title>vue3-element-admin</title>
-  </head>
+    <style type="text/css">
+      html,
+      body {
+        padding: 0;
+        margin: 0;
+      }
 
+      html.dark .app-pre-loading {
+        background-color: #27272b;
+      }
+
+      .app-pre-loading {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100vw;
+        height: 100vh;
+        background-color: #fff;
+      }
+
+      .app-pre-loading svg {
+        transform: scale(2.5);
+      }
+
+      .app-pre-loading svg polyline {
+        fill: none;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        stroke-width: 2;
+      }
+
+      .app-pre-loading svg polyline#back {
+        stroke: rgb(110 123 242 / 30%);
+      }
+
+      .app-pre-loading svg polyline#front {
+        stroke: #6e7bf2;
+        stroke-dasharray: 12, 36;
+        stroke-dashoffset: 48;
+        animation: appPreLoadingDash 1s linear infinite;
+      }
+
+      @keyframes appPreLoadingDash {
+        62.5% {
+          opacity: 0;
+        }
+
+        100% {
+          stroke-dashoffset: 0;
+        }
+      }
+
+      @keyframes appPreLoadingDash {
+        62.5% {
+          opacity: 0;
+        }
+
+        100% {
+          stroke-dashoffset: 0;
+        }
+      }
+
+      @keyframes appPreLoadingDash {
+        62.5% {
+          opacity: 0;
+        }
+
+        100% {
+          stroke-dashoffset: 0;
+        }
+      }
+
+      @keyframes appPreLoadingDash {
+        62.5% {
+          opacity: 0;
+        }
+
+        100% {
+          stroke-dashoffset: 0;
+        }
+      }
+    </style>
+  </head>
   <body>
-    <div id="app"></div>
+    <div id="app">
+      <!-- pre loading -->
+      <div class="app-pre-loading">
+        <svg width="16px" height="12px">
+          <polyline id="back" points="1 6 4 6 6 11 10 1 12 6 15 6"></polyline>
+          <polyline id="front" points="1 6 4 6 6 11 10 1 12 6 15 6"></polyline>
+        </svg>
+      </div>
+    </div>
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>
