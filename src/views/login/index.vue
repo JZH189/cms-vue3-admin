@@ -171,6 +171,9 @@ function getCaptcha() {
     })
     .catch((err) => {
       console.log("getCaptcha err:", err);
+    })
+    .finally(() => {
+      loginData.verifyCode = undefined;
     });
 }
 
