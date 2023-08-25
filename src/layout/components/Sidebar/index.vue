@@ -8,13 +8,26 @@ import { usePermissionStore } from "@/store/modules/permission";
 import { useAppStore } from "@/store/modules/app";
 import { storeToRefs } from "pinia";
 import variables from "@/styles/variables.module.scss";
-import safeIcon from "@/const/safeIcon";
+
 const settingsStore = useSettingsStore();
 const permissionStore = usePermissionStore();
 const appStore = useAppStore();
 const currRoute = useRoute();
 const { sidebarLogo } = storeToRefs(settingsStore);
-const safeIcons = [...safeIcon];
+// safe icon ,前端需要用到的动态icons必须要在此定义，否则无法显示图标
+const safeIcons = [
+  "i-carbon:dashboard",
+  "i-carbon:catalog",
+  "i-carbon:align-box-middle-right",
+  "i-carbon:settings",
+  "i-carbon:cics-system-group",
+  "i-carbon:grid",
+  "i-carbon:user-role",
+  "i-carbon:user",
+  "i-carbon:application-web",
+  "i-carbon:data-volume",
+  "i-carbon:data-1",
+];
 </script>
 
 <template>
