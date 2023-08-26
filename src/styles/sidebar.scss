@@ -100,7 +100,7 @@
       overflow: hidden;
 
       & > .el-sub-menu__title {
-        padding: 0 !important;
+        padding: 0 var(--el-menu-base-level-padding);
 
         .svg-icon {
           margin-left: 20px;

@@ -73,12 +73,11 @@ function resolvePath(routePath: string) {
     <template v-if="justOneShowingChild(item.children, item)">
       <app-link v-if="currentRoute.meta" :to="resolvePath(currentRoute.path)">
         <el-menu-item :index="resolvePath(currentRoute.path)">
-          <template #title>
-            <span
+          <i
               v-if="currentRoute.meta?.icon"
-              m-r-2
               :class="`i-${currentRoute.meta.icon}`"
-            ></span>
+            ></i>
+          <template #title>
             {{ currentRoute.meta.title }}
           </template>
         </el-menu-item>
@@ -88,14 +87,12 @@ function resolvePath(routePath: string) {
     <!-- 包含多个子路由  -->
     <el-sub-menu v-else :index="resolvePath(item.path)" teleported>
       <template #title>
-        <span
+        <i
           v-if="item.meta?.icon"
           :class="`i-${item.meta.icon}`"
-          m-r-2
-        ></span>
+        ></i>
         <span v-if="item.meta && item.meta.title">{{ item.meta.title }}</span>
       </template>
-
       <sidebar-item
         v-for="child in item.children"
         :key="child.path"
