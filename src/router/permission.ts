@@ -77,7 +77,6 @@ router.beforeEach(async (to, from, next) => {
       const userStore = useUserStoreHook();
       const hasMenus = userStore.menus && userStore.menus.length > 0;
       if (hasMenus) {
-        await getAsyncRoute(userStore);
         // 未匹配到任何路由，跳转404
         if (to.matched.length === 0) {
           from.name ? next({ name: from.name }) : next("/404");
