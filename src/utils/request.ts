@@ -15,6 +15,17 @@ type Result<T = any> = {
   data?: T;
 };
 
+function showConfirm(message: string, showCancelButton = false) {
+  ElMessageBox.confirm(message, "提示", {
+    confirmButtonText: "确定",
+    showCancelButton: false,
+    type: "warning",
+  }).then(() => {
+    localStorage.clear();
+    window.location.href = "/";
+  });
+}
+
 // 导出Request类，可以用来自定义传递配置来创建实例
 export default class Request {
   // axios 实例
@@ -63,13 +74,7 @@ export default class Request {
           return response.data.data;
         }
         if (code === 401) {
-          ElMessageBox.confirm("授权已失效，请重新登录", "提示", {
-            confirmButtonText: "确定",
-            type: "warning",
-          }).then(() => {
-            localStorage.clear();
-            window.location.href = "/";
-          });
+          showConfirm(msg);
           return Promise.reject(new Error("授权已失效"));
         }
         ElMessage.error(msg);
@@ -115,16 +120,10 @@ export default class Request {
             default:
               error.message = `连接出错(${error.response.status})!`;
           }
-          ElMessage.error(
-            `${error.message}, url: ${error.response.config.url}`
-          );
-          return Promise.reject(error.message);
+          showConfirm(error.message);
+          return Promise.reject(new Error(error.message));
         }
-        ElMessageBox.confirm(`请求错误：${error.message}`, "提示", {
-          confirmButtonText: "确定",
-          showCancelButton: false,
-          type: "warning",
-        });
+        showConfirm(`请求错误：${error.message}`);
         return Promise.reject(error.message);
       }
     );
