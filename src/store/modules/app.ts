@@ -57,8 +57,5 @@ export const useAppStore = defineStore(
       closeSideBar,
       openSideBar,
     };
-  },
-  {
-    persist: true,
   }
 );

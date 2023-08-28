@@ -16,9 +16,6 @@ export const usePermissionStore = defineStore(
     }
 
     return { routes, setRoutes };
-  },
-  {
-    persist: true,
   }
 );
 

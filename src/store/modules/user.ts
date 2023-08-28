@@ -29,14 +29,25 @@ export const useUserStore = defineStore(
             data: loginData,
           });
           token.value = loginResult.token;
+          resolve();
+        } catch (error) {
+          console.log("error: ", error);
+          reject(error);
+        }
+      });
+    }
+
+    // 获取登录用户信息
+    function getInfo() {
+      return new Promise<LoginInfo>(async (resolve, reject) => {
+        try {
           const loginInfo = await API.get<LoginInfo>({
             url: "/admin/sys/user/info",
           });
           nickname.value = loginInfo.username;
           avatar.value = loginInfo.avatar;
-          resolve();
+          resolve(loginInfo);
         } catch (error) {
-          console.log("error: ", error);
           reject(error);
         }
       });
@@ -89,6 +100,7 @@ export const useUserStore = defineStore(
       menus,
       perms,
       login,
+      getInfo,
       getPermmenu,
       logout,
       resetToken,
@@ -97,9 +109,6 @@ export const useUserStore = defineStore(
        */
       userId,
     };
-  },
-  {
-    persist: true,
   }
 );
 

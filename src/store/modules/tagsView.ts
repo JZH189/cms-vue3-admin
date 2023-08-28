@@ -216,8 +216,5 @@ export const useTagsViewStore = defineStore(
       delAllVisitedViews,
       delAllCachedViews,
     };
-  },
-  {
-    persist: true,
   }
 );

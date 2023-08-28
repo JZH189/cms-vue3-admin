@@ -85,6 +85,7 @@ router.beforeEach(async (to, from, next) => {
         }
       } else {
         try {
+          await userStore.getInfo();
           await getAsyncRoute(userStore);
           next({ ...to, replace: true });
         } catch (error) {

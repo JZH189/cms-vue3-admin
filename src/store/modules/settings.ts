@@ -46,8 +46,5 @@ export const useSettingsStore = defineStore(
       layout,
       changeSetting,
     };
-  },
-  {
-    persist: true,
   }
 );
