@@ -58,8 +58,8 @@ export function transformMenuToRoute(menus: Menu[]): RouteRecordRaw[] {
       name: menu.router,
       path: menu.router,
       component:
-        modules[`@/views${menu.router}/index.vue`] ??
-        modules[`@/views/error-page/404.vue`],
+        modules[`/src/views${menu.router}/index.vue`] ??
+        modules[`/src/views/error-page/404.vue`],
       meta,
     };
     return route;
