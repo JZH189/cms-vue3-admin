@@ -31,7 +31,7 @@ const tagsViewStore = useTagsViewStore();
 
   .main {
     padding: 15px;
-    background-color: var(--white);
+    background-color: var(--mainBackGround);
   }
 }
 
