@@ -19,6 +19,9 @@ function showConfirm(message: string, showCancelButton = false) {
   ElMessageBox.confirm(message, "提示", {
     confirmButtonText: "确定",
     showCancelButton: false,
+    closeOnClickModal: false,
+    closeOnPressEscape: false,
+    showClose: false,
     type: "warning",
   }).then(() => {
     localStorage.clear();
@@ -120,7 +123,11 @@ export default class Request {
             default:
               error.message = `连接出错(${error.response.status})!`;
           }
-          showConfirm(error.message);
+          if (error.response.status < 500) {
+            showConfirm(error.message);
+          } else {
+            ElMessage.error(error.message);
+          }
           return Promise.reject(new Error(error.message));
         }
         showConfirm(`请求错误：${error.message}`);
