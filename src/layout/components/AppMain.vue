@@ -9,7 +9,9 @@ const tagsViewStore = useTagsViewStore();
     <router-view v-slot="{ Component, route }">
       <transition name="router-fade" mode="out-in">
         <keep-alive :include="tagsViewStore.cachedViews">
-          <component :is="Component" :key="route.fullPath" />
+          <div class="main">
+            <component :is="Component" :key="route.fullPath" />
+          </div>
         </keep-alive>
       </transition>
     </router-view>
@@ -23,8 +25,14 @@ const tagsViewStore = useTagsViewStore();
 
   /* 50= navbar  50  */
   min-height: calc(100vh - 50px);
+  padding: 10px;
   overflow: hidden;
   background-color: var(--el-bg-color-page);
+
+  .main {
+    padding: 15px;
+    background-color: var(--white);
+  }
 }
 
 .fixed-header + .app-main {
