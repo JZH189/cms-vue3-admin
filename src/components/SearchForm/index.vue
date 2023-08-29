@@ -20,15 +20,13 @@ enum FormItemType {
 }
 //formItem 接口
 interface IformItem {
-  label: string;
   key: string;
-  type: string;
-  value: any;
-  placeholder?: string;
-  required?: boolean;
-  fieldOptions?: any[];
-  fieldAttributes?: any; //字段Attributes
-  formItemProps?: FormItemProps; //表单项Props
+  label: string;
+  type: FormItemType;
+  value?: any;
+  attrs?: any; //字段Attributes
+  opts?: any[]; //选项值
+  formItemAttrs?: FormItemProps; //表单项Attrs
 }
 
 interface Iprops {
@@ -43,76 +41,17 @@ const emit = defineEmits<{
   (e: "onItemChang", value: any): void;
 }>();
 
-interface RuleForm {
-  name: string;
-  region: string;
-  region1: string[];
-  activeTime: string;
-  delivery: boolean;
-  type: string[];
-  resource: string;
-  desc: string;
-}
-
-const formSize = ref("default");
+watch(
+  () => prop,
+  (val) => {
+    console.log(val);
+  },
+  {
+    immediate: true
+  }
+)
+const ruleForm: any = reactive({})
 const ruleFormRef = ref<FormInstance>();
-const ruleForm = reactive<RuleForm>({
-  name: "Hello",
-  region: "",
-  region1: [],
-  activeTime: "",
-  delivery: false,
-  type: [],
-  resource: "",
-  desc: "",
-});
-
-const rules = reactive<FormRules<RuleForm>>({
-  name: [
-    { required: true, message: "Please input Activity name", trigger: "blur" },
-    { min: 3, max: 5, message: "Length should be 3 to 5", trigger: "blur" },
-  ],
-  region: [
-    {
-      required: true,
-      message: "Please select Activity zone",
-      trigger: "change",
-    },
-  ],
-  region1: [
-    {
-      required: true,
-      message: "Please select Activity zone",
-      trigger: "change",
-    },
-  ],
-  activeTime: [
-    {
-      required: true,
-      message: "Please pick a time",
-      trigger: "change",
-    },
-  ],
-  type: [
-    {
-      type: "array",
-      required: true,
-      message: "Please select at least one activity type",
-      trigger: "change",
-    },
-  ],
-  resource: [
-    {
-      required: true,
-      message: "Please select activity resource",
-      trigger: "change",
-    },
-  ],
-  desc: [
-    { required: true, message: "Please input activity form", trigger: "blur" },
-  ],
-});
-
 const submitForm = async (formEl: FormInstance | undefined) => {
   console.log("form:", JSON.stringify(ruleForm));
   if (!formEl) return;
@@ -129,121 +68,90 @@ const resetForm = (formEl: FormInstance | undefined) => {
   if (!formEl) return;
   formEl.resetFields();
 };
-
-const options = Array.from({ length: 10000 }).map((_, idx) => ({
-  value: `${idx + 1}`,
-  label: `${idx + 1}`,
-}));
 </script>
 
 <template>
   <el-form
     ref="ruleFormRef"
     :model="ruleForm"
-    :rules="rules"
-    label-width="120px"
-    class="demo-ruleForm"
-    :size="formSize"
-    status-icon
   >
     <el-form-item
       v-for="{
         type,
         label,
         key,
-        fieldOptions,
-        fieldAttributes,
-        formItemProps,
-        required,
-        placeholder,
+        opts,
+        attrs,
+        formItemAttrs,
       } in prop.formData"
       :key="key"
       :label="label"
       :prop="key"
-      v-bind="formItemProps"
+      v-bind="formItemAttrs"
     >
       <!-- 输入框 -->
       <el-input
         v-if="type === 'input'"
-        v-model="ruleForm.key"
-        :clearable="!required"
-        :placeholder="placeholder"
-        v-bind="fieldAttributes"
+        v-model.trim="ruleForm[key]"
+        v-bind="attrs"
       />
       <!-- 文本框 -->
       <el-input
-        v-if="type === 'textarea'"
-        v-model="ruleForm.key"
-        :placeholder="placeholder"
-        v-bind="fieldAttributes"
+        v-else-if="type === 'textarea'"
+        v-model.trim="ruleForm[key]"
+        v-bind="attrs"
       />
-      <!-- 下拉单选框 -->
+      <!-- 下拉选择框 -->
       <el-select
-        v-else-if="type === 'select'"
-        v-model="ruleForm.key"
-        :options="fieldOptions"
-        :clearable="!required"
-        :placeholder="placeholder"
-        v-bind="fieldAttributes"
-      ></el-select>
-      <!-- 下拉多选框 -->
-      <el-select
-        v-else-if="type === 'multipleSelect'"
-        v-model="ruleForm.key"
-        :options="fieldOptions"
-        :clearable="!required"
-        :placeholder="placeholder"
-        v-bind="fieldAttributes"
-      ></el-select>
-    </el-form-item>
-    <!-- <el-form-item label="Activity name" prop="name">
-      <el-input v-model="ruleForm.name" />
-    </el-form-item>
-    <el-form-item label="Activity zone" prop="region">
-      <el-select v-model="ruleForm.region" placeholder="Activity zone">
-        <el-option label="Zone one" value="shanghai" />
-        <el-option label="Zone two" value="beijing" />
-      </el-select>
-    </el-form-item>
-    <el-form-item label="Activity zone1" prop="region1">
-      <el-select
-        v-model="ruleForm.region1"
-        multiple
-        collapse-tags
-        placeholder="Activity zone"
+        v-else-if="['multipleSelect', 'select'].includes(type)"
+        v-model="ruleForm[key]"
+        v-bind="attrs"
+        :multiple="type === 'multipleSelect'"
+        :collapse-tags="type === 'multipleSelect'"
       >
-        <el-option label="Zone one" value="shanghai" />
-        <el-option label="Zone two" value="beijing" />
+        <el-option v-for="opt in opts" :key="opt.label" :label="opt.label" :value="opt.value"></el-option>
       </el-select>
-    </el-form-item>
-    <el-form-item label="Activity time" required>
+      <!-- 时间选择 -->
+      <el-time-picker
+        v-else-if="type === 'time-picker'"
+        v-model="ruleForm[key]"
+        v-bind="attrs"
+      ></el-time-picker>
+      <!-- 下拉选择时间 -->
+      <el-time-select
+        v-else-if="type === 'time-select'"
+        v-model="ruleForm[key]"
+        v-bind="attrs"
+      ></el-time-select>
+      <!-- 日期选择 -->
       <el-date-picker
-        v-model="ruleForm.activeTime"
-        type="datetime"
-        value-format="YYYY-MM-DD HH:mm:ss"
-        placeholder="Select date and time"
+        v-else-if="type === 'date-picker'"
+        v-model="ruleForm[key]"
+        v-bind="attrs"
       />
-    </el-form-item>
-    <el-form-item label="Instant delivery" prop="delivery">
-      <el-switch v-model="ruleForm.delivery" />
-    </el-form-item>
-    <el-form-item label="Activity type" prop="type">
-      <el-checkbox-group v-model="ruleForm.type">
-        <el-checkbox label="Online activities" name="type" />
-        <el-checkbox label="Promotion activities" name="type" />
-        <el-checkbox label="Offline activities" name="type" />
-        <el-checkbox label="Simple brand exposure" name="type" />
+      <!-- 开关 -->
+      <el-switch
+        v-else-if="type === 'switch'"
+        v-model="ruleForm[key]" 
+        v-bind="attrs"
+      ></el-switch>
+      <!-- 复选框 -->
+      <el-checkbox-group v-else-if="type === 'checkbox'" v-model="ruleForm[key]">
+        <el-checkbox v-for="checkboxItem in opts" :key="checkboxItem.label" :label="checkboxItem.label" />
       </el-checkbox-group>
-    </el-form-item>
-    <el-form-item label="Resources" prop="resource">
-      <el-radio-group v-model="ruleForm.resource">
-        <el-radio label="Sponsorship" />
-        <el-radio label="Venue" />
+      <!-- 单选框 -->
+      <el-radio-group v-else-if="type === 'radio'" v-model="ruleForm[key]" v-bind="attrs">
+        <el-radio v-for="radioItem in opts" :key="radioItem.label" :label="radioItem.label">{{ radioItem.label }}</el-radio>
       </el-radio-group>
+      <!-- 颜色选择 -->
+      <el-color-picker v-else-if="type === 'color-picker'" v-model="ruleForm[key]" v-bind="attrs" />
+      <!-- 级联选择 -->
+      <el-cascader v-else-if="type === 'cascader'" v-model="ruleForm[key]" v-bind="attrs" />
+      <!-- 滑块 -->
+      <el-slider v-else-if="type === 'slider'" v-model="ruleForm[key]" v-bind="attrs" />
+      <!-- 评分 -->
+      <el-slider v-else-if="type === 'rate'" v-model="ruleForm[key]" v-bind="attrs" />
     </el-form-item>
-    <el-form-item label="Activity form" prop="desc">
-      <el-input v-model="ruleForm.desc" type="textarea" />
-    </el-form-item> -->
     <el-form-item>
       <el-button type="primary" @click="submitForm(ruleFormRef)"
         >搜索</el-button

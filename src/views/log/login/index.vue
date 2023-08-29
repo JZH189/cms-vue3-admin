@@ -2,6 +2,12 @@
 import SearchForm from "@/components/SearchForm/index.vue";
 const formData = [
   {
+    label: "文本框：",
+    key: "desc",
+    type: "textarea",
+    value: undefined,
+  },
+  {
     label: "输入框：",
     key: "name",
     type: "input",
@@ -11,7 +17,7 @@ const formData = [
     label: "下拉单选框：",
     key: "region",
     type: "select",
-    options: [
+    opts: [
       {
         label: "Zone one",
         value: "shanghai",
@@ -24,10 +30,10 @@ const formData = [
     value: undefined,
   },
   {
-    label: "多选框：",
+    label: "下拉多选框：",
     key: "region1",
     type: "multipleSelect",
-    options: [
+    opts: [
       {
         label: "Zone one",
         value: "shanghai",
@@ -41,7 +47,13 @@ const formData = [
   },
   {
     label: "时间选择：",
-    key: "activeTime",
+    key: "activeTime1",
+    type: "time-picker",
+    value: undefined,
+  },
+  {
+    label: "日期选择：",
+    key: "activeTime2",
     type: "date-picker",
     value: undefined,
   },
@@ -55,7 +67,7 @@ const formData = [
     label: "复选框：",
     key: "type",
     type: "checkbox",
-    options: [
+    opts: [
       {
         label: "Zone one",
         value: "shanghai",
@@ -71,7 +83,7 @@ const formData = [
     label: "单选框：",
     key: "resource",
     type: "radio",
-    options: [
+    opts: [
       {
         label: "Zone one",
         value: "shanghai",
@@ -84,14 +96,26 @@ const formData = [
     value: undefined,
   },
   {
-    label: "文本框：",
-    key: "desc",
-    type: "textarea",
+    label: "颜色选择：",
+    key: "colorPicker",
+    type: "color-picker",
+    value: undefined,
+  },
+  {
+    label: "滑块：",
+    key: "slider",
+    type: "slider",
+    value: undefined,
+  },
+  {
+    label: "评分：",
+    key: "rate",
+    type: "rate",
     value: undefined,
   },
 ];
 </script>
 
 <template>
-  <SearchForm></SearchForm>
+  <SearchForm :form-data="formData"></SearchForm>
 </template>
