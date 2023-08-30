@@ -11,7 +11,7 @@
     "esModuleInterop": true,
     "lib": ["esnext", "dom"],
     "baseUrl": ".",
-    "noImplicitAny": true /* 禁用隐式any */,
+    "noImplicitAny": false /* 启用隐式any */,
     "allowJs": true,
     "paths": {
       "@/*": ["src/*"]
