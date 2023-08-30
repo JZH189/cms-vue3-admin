@@ -60,6 +60,10 @@ const formData = [
     key: "datePicker",
     type: FormItemType.datePicker,
     value: undefined,
+    attrs: {
+      type: "daterange",
+      valueFormat: "YYYY-MM-DD",
+    },
   },
   {
     label: "开关切换：",

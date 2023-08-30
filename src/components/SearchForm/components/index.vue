@@ -90,7 +90,13 @@ function resetForm(formEl: FormInstance | undefined) {
 </script>
 
 <template>
-  <el-form ref="searchFormRef" :model="form" :rules="rules">
+  <el-form
+    ref="searchFormRef"
+    class="searchForm"
+    :model="form"
+    :rules="rules"
+    label-width="120px"
+  >
     <el-form-item
       v-for="{ type, label, key, opts, attrs, formItemAttrs } in prop.formData"
       :key="key"
@@ -208,3 +214,17 @@ function resetForm(formEl: FormInstance | undefined) {
     </el-form-item>
   </el-form>
 </template>
+
+<style lang="scss" scoped>
+.searchForm {
+  display: grid;
+  // grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  grid-template-columns: minmax(350px, 1fr);
+  grid-gap: 15px;
+
+  .el-select,
+  .el-input {
+    width: 100%;
+  }
+}
+</style>
