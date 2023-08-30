@@ -1,22 +1,22 @@
 <script lang="ts" setup>
-import SearchForm from "@/components/SearchForm/index.vue";
+import SearchForm, { FormItemType } from "@/components/SearchForm";
 const formData = [
   {
     label: "文本框：",
-    key: "desc",
-    type: "textarea",
-    value: undefined,
+    key: "textarea",
+    type: FormItemType.textarea,
+    value: "这是文本内容",
   },
   {
     label: "输入框：",
-    key: "name",
-    type: "input",
-    value: undefined,
+    key: "input",
+    type: FormItemType.input,
+    value: "undefined",
   },
   {
     label: "下拉单选框：",
     key: "region",
-    type: "select",
+    type: FormItemType.select,
     opts: [
       {
         label: "Zone one",
@@ -31,8 +31,12 @@ const formData = [
   },
   {
     label: "下拉多选框：",
-    key: "region1",
-    type: "multipleSelect",
+    key: "selectMultiple",
+    type: FormItemType.select,
+    attrs: {
+      multiple: true,
+      collapseTags: true,
+    },
     opts: [
       {
         label: "Zone one",
@@ -47,26 +51,26 @@ const formData = [
   },
   {
     label: "时间选择：",
-    key: "activeTime1",
-    type: "time-picker",
+    key: "timePicker",
+    type: FormItemType.timePicker,
     value: undefined,
   },
   {
     label: "日期选择：",
-    key: "activeTime2",
-    type: "date-picker",
+    key: "datePicker",
+    type: FormItemType.datePicker,
     value: undefined,
   },
   {
     label: "开关切换：",
-    key: "delivery",
-    type: "switch",
-    value: undefined,
+    key: "switch",
+    type: FormItemType.switch,
+    value: true,
   },
   {
     label: "复选框：",
-    key: "type",
-    type: "checkbox",
+    key: "checkbox",
+    type: FormItemType.checkbox,
     opts: [
       {
         label: "Zone one",
@@ -81,8 +85,8 @@ const formData = [
   },
   {
     label: "单选框：",
-    key: "resource",
-    type: "radio",
+    key: "radio",
+    type: FormItemType.radio,
     opts: [
       {
         label: "Zone one",
@@ -98,24 +102,46 @@ const formData = [
   {
     label: "颜色选择：",
     key: "colorPicker",
-    type: "color-picker",
+    type: FormItemType.colorPicker,
     value: undefined,
   },
   {
     label: "滑块：",
     key: "slider",
-    type: "slider",
+    type: FormItemType.slider,
     value: undefined,
   },
   {
     label: "评分：",
     key: "rate",
-    type: "rate",
+    type: FormItemType.rate,
     value: undefined,
   },
 ];
+
+const rules = {
+  textarea: [{ required: true, message: "请输入", trigger: "blur" }],
+  input: [{ required: true, message: "请输入", trigger: "blur" }],
+  region: [{ required: true, message: "请选择", trigger: ["blur", "change"] }],
+  selectMultiple: [
+    { required: true, message: "请选择", trigger: ["blur", "change"] },
+  ],
+  timePicker: [
+    { required: true, message: "请选择", trigger: ["blur", "change"] },
+  ],
+  switch: [{ required: false, message: "请选择", trigger: ["blur", "change"] }],
+  checkbox: [
+    { required: true, message: "请选择", trigger: ["blur", "change"] },
+  ],
+  radio: [{ required: true, message: "请选择", trigger: ["blur", "change"] }],
+  colorPicker: [
+    { required: true, message: "请选择", trigger: ["blur", "change"] },
+  ],
+  slider: [{ required: true, message: "请选择", trigger: ["blur", "change"] }],
+  rate: [{ required: true, message: "请选择", trigger: ["blur", "change"] }],
+};
 </script>
 
 <template>
-  <SearchForm :form-data="formData"></SearchForm>
+  <SearchForm :form-data="formData" :rules="rules"></SearchForm>
 </template>
