@@ -6,6 +6,10 @@ const formData = [
     key: "textarea",
     type: FormItemType.textarea,
     value: "这是文本内容",
+    attrs: {
+      showWordLimit: true,
+      maxlength: 30,
+    },
   },
   {
     label: "输入框：",
@@ -144,8 +148,17 @@ const rules = {
   slider: [{ required: true, message: "请选择", trigger: ["blur", "change"] }],
   rate: [{ required: true, message: "请选择", trigger: ["blur", "change"] }],
 };
+
+function onSearch() {}
+
+function onReset() {}
 </script>
 
 <template>
-  <SearchForm :form-data="formData" :rules="rules"></SearchForm>
+  <SearchForm
+    :form-data="formData"
+    :rules="rules"
+    @on-search="onSearch"
+    @on-reset="onReset"
+  ></SearchForm>
 </template>
