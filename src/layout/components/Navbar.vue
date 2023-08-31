@@ -83,7 +83,9 @@ function showSidebar() {
       </div>
       <!-- 全局设置 -->
       <el-tooltip content="主题设置" effect="dark" placement="bottom">
-        <div class="i-carbon:settings-view setting" @click="showSidebar"></div>
+        <div class="setting" @click="showSidebar">
+          <i class="i-carbon:settings-view"></i>
+        </div>
       </el-tooltip>
       <!-- 用户头像 -->
       <el-dropdown trigger="click">
@@ -137,16 +139,21 @@ function showSidebar() {
 
   .setting {
     display: inline-block;
-    width: 20px;
-    height: 20px;
+    width: 30px;
+    height: 50px;
     margin: 0 5px;
-    line-height: 20px;
-    color: #5a5e66;
+    line-height: 55px;
+    color: var(--textColor);
     text-align: center;
     cursor: pointer;
 
+    i {
+      width: 20px;
+      height: 20px;
+    }
+
     &:hover {
-      background-color: rgb(46 64 82);
+      background: var(--textHover);
     }
   }
 
