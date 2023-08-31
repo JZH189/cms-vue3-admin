@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import SearchForm, { FormItemType } from "@/components/SearchForm";
+import { searchTable } from '@/utils/search-table';
 const formData = [
   {
     label: "文本框：",
@@ -149,9 +150,30 @@ const rules = {
   rate: [{ required: true, message: "请选择", trigger: ["blur", "change"] }],
 };
 
-function onSearch() {}
+const {
+  searchList,
+  loading,
+  tableList,
+  pagination,
+  resetSearchParams,
+  doSearch } = searchTable({
+    queryApi: '/admin/log/login/loginPage',
+    searchData: formData,
+  })
 
-function onReset() {}
+  function onSearch() {}
+  
+  function onReset() { }
+  
+  onMounted(async () => {
+    await doSearch({
+      currentPage: 1,
+      pageSize: 100,
+      param: {
+        account: 'admin'
+      }})
+    console.log('tableList: ', tableList.value);
+})
 </script>
 
 <template>

@@ -1,15 +1,12 @@
 import { cloneDeep, get } from "lodash-es";
 import { usePagination } from "vue-request";
 
-export function searchTable(options) {
-  const { searchData, columnData, baseURL, queryApi } = options;
+export function searchTable({ searchData, queryApi }) {
   const { data, loading, current, pageSize, total, run } =
     usePagination(pagerService);
-  const exportLoading = ref(false);
   const pagination = reactive({ current, pageSize, total });
-  const tableList = computed(() => get(data.value, "rows", []));
+  const tableList = computed(() => get(data.value, "list", []));  
   const searchList = ref(cloneDeep(searchData || []));
-  const columnList = ref(cloneDeep(columnData || []));
   let searchParams: any = null;
 
   // 重置查询条件
@@ -36,19 +33,23 @@ export function searchTable(options) {
 
   // 调用查询接口，该函数会通过run执行
   async function pagerService(params?: any) {
+    let { currentPage, pageSize, param = {} } = params
     // 改变pageSize时，把currentPage重置为1
-    if (params.pageSize && pageSize.value !== params.pageSize) {
-      params.currentPage = 1;
+    if (pageSize && pageSize.value && pageSize.value !== pageSize) {
+      currentPage = 1;
     }
     // 默认展示100条
-    if (!params.pageSize || params.pageSize < 100) params.pageSize = 100;
+    if (!pageSize) pageSize = 100;
     const reqParams = {
-      currentPage: params.currentPage || 1,
-      pageSize: params.pageSize || 100,
-      q: { ...params, currentPage: undefined, pageSize: undefined },
+      currentPage: currentPage || 1,
+      pageSize: pageSize || 100,
+      param: {
+        ...param,
+        currentPage: undefined,
+        pageSize: undefined,
+      },
     };
     const result: any = await API.post({
-      baseURL,
       url: queryApi,
       data: reqParams,
     });
@@ -60,7 +61,7 @@ export function searchTable(options) {
    * @param {*} params 发起查询时传参（除搜索条件以外的参数）
    * @return {*}
    */
-  async function doSearch(initFlag = false, params = {}) {
+  async function doSearch(params = {}) {
     // 获取搜索条件的参数
     const curParams = getSearchParams();
     // 校验参数
@@ -71,11 +72,9 @@ export function searchTable(options) {
 
   return {
     searchList,
-    columnList,
     loading,
     tableList,
     pagination,
-    exportLoading,
     resetSearchParams,
     doSearch,
   };

@@ -17,10 +17,9 @@ import { setGlobalOptions } from "vue-request";
 setGlobalOptions({
   manual: true,
   pagination: {
-    currentKey: "current",
-    pageSizeKey: "pageSize",
-    totalKey: "pagination.total",
-    totalPageKey: "pagination.totalPage",
+    currentKey: "currentPage", //当前页数
+    pageSizeKey: "pageSize", //每页获取条数
+    totalKey: "pagination.total", //指定 data 中 total 属性的路径
   },
 });
 
