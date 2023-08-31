@@ -97,134 +97,144 @@ function resetForm(formEl: FormInstance | undefined) {
     :rules="rules"
     label-width="120px"
   >
-    <el-form-item
-      v-for="{ type, label, key, opts, attrs, formItemAttrs } in prop.formData"
-      :key="key"
-      :label="label"
-      :prop="key"
-      v-bind="formItemAttrs"
-    >
-      <!-- 输入框 -->
-      <el-input
-        v-if="type === 'input'"
-        v-model.trim="form[key]"
-        :clearable="!attrs?.disabled"
-        v-bind="attrs"
-      />
-      <!-- 文本框 -->
-      <el-input
-        v-else-if="type === 'textarea'"
-        v-model.trim="form[key]"
-        type="textarea"
-        v-bind="attrs"
-      />
-      <!-- 下拉选择框 -->
-      <el-select
-        v-else-if="type === 'select'"
-        v-model="form[key]"
-        :clearable="!attrs?.disabled"
-        v-bind="attrs"
+    <el-row :gutter="10">
+      <el-col
+        v-for="{
+          type,
+          label,
+          key,
+          opts,
+          attrs,
+          formItemAttrs,
+        } in prop.formData"
+        :key="key"
+        :xs="24"
+        :sm="12"
+        :md="8"
+        :lg="8"
+        :xl="4"
       >
-        <el-option
-          v-for="opt in opts"
-          :key="opt.label"
-          :label="opt.label"
-          :value="opt.value"
-        ></el-option>
-      </el-select>
-      <!-- 时间选择 -->
-      <el-time-picker
-        v-else-if="type === 'time-picker'"
-        v-model="form[key]"
-        :clearable="!attrs?.disabled"
-        v-bind="attrs"
-      ></el-time-picker>
-      <!-- 下拉选择时间 -->
-      <el-time-select
-        v-else-if="type === 'time-select'"
-        v-model="form[key]"
-        :clearable="!attrs?.disabled"
-        v-bind="attrs"
-      ></el-time-select>
-      <!-- 日期选择 -->
-      <el-date-picker
-        v-else-if="type === 'date-picker'"
-        v-model="form[key]"
-        :clearable="!attrs?.disabled"
-        v-bind="attrs"
-      />
-      <!-- 开关 -->
-      <el-switch
-        v-else-if="type === 'switch'"
-        v-model="form[key]"
-        v-bind="attrs"
-      ></el-switch>
-      <!-- 复选框 -->
-      <el-checkbox-group v-else-if="type === 'checkbox'" v-model="form[key]">
-        <el-checkbox
-          v-for="checkboxItem in opts"
-          :key="checkboxItem.label"
-          :label="checkboxItem.label"
-        />
-      </el-checkbox-group>
-      <!-- 单选框 -->
-      <el-radio-group
-        v-else-if="type === 'radio'"
-        v-model="form[key]"
-        v-bind="attrs"
-      >
-        <el-radio
-          v-for="radioItem in opts"
-          :key="radioItem.label"
-          :label="radioItem.label"
-          >{{ radioItem.label }}</el-radio
-        >
-      </el-radio-group>
-      <!-- 颜色选择 -->
-      <el-color-picker
-        v-else-if="type === 'color-picker'"
-        v-model="form[key]"
-        v-bind="attrs"
-      />
-      <!-- 级联选择 -->
-      <el-cascader
-        v-else-if="type === 'cascader'"
-        v-model="form[key]"
-        :clearable="!attrs?.disabled"
-        v-bind="attrs"
-      />
-      <!-- 滑块 -->
-      <el-slider
-        v-else-if="type === 'slider'"
-        v-model="form[key]"
-        v-bind="attrs"
-      />
-      <!-- 评分 -->
-      <el-slider
-        v-else-if="type === 'rate'"
-        v-model="form[key]"
-        v-bind="attrs"
-      />
-    </el-form-item>
-    <el-form-item>
-      <el-button type="primary" @click="submitForm(searchFormRef)"
-        >搜索</el-button
-      >
-      <el-button @click="resetForm(searchFormRef)">重置</el-button>
-    </el-form-item>
+        <el-form-item :label="label" :prop="key" v-bind="formItemAttrs">
+          <!-- 输入框 -->
+          <el-input
+            v-if="type === 'input'"
+            v-model.trim="form[key]"
+            :clearable="!attrs?.disabled"
+            v-bind="attrs"
+          />
+          <!-- 文本框 -->
+          <el-input
+            v-else-if="type === 'textarea'"
+            v-model.trim="form[key]"
+            type="textarea"
+            v-bind="attrs"
+          />
+          <!-- 下拉选择框 -->
+          <el-select
+            v-else-if="type === 'select'"
+            v-model="form[key]"
+            :clearable="!attrs?.disabled"
+            v-bind="attrs"
+          >
+            <el-option
+              v-for="opt in opts"
+              :key="opt.label"
+              :label="opt.label"
+              :value="opt.value"
+            ></el-option>
+          </el-select>
+          <!-- 时间选择 -->
+          <el-time-picker
+            v-else-if="type === 'time-picker'"
+            v-model="form[key]"
+            :clearable="!attrs?.disabled"
+            v-bind="attrs"
+          ></el-time-picker>
+          <!-- 下拉选择时间 -->
+          <el-time-select
+            v-else-if="type === 'time-select'"
+            v-model="form[key]"
+            :clearable="!attrs?.disabled"
+            v-bind="attrs"
+          ></el-time-select>
+          <!-- 日期选择 -->
+          <el-date-picker
+            v-else-if="type === 'date-picker'"
+            v-model="form[key]"
+            :clearable="!attrs?.disabled"
+            v-bind="attrs"
+          />
+          <!-- 开关 -->
+          <el-switch
+            v-else-if="type === 'switch'"
+            v-model="form[key]"
+            v-bind="attrs"
+          ></el-switch>
+          <!-- 复选框 -->
+          <el-checkbox-group
+            v-else-if="type === 'checkbox'"
+            v-model="form[key]"
+          >
+            <el-checkbox
+              v-for="checkboxItem in opts"
+              :key="checkboxItem.label"
+              :label="checkboxItem.label"
+            />
+          </el-checkbox-group>
+          <!-- 单选框 -->
+          <el-radio-group
+            v-else-if="type === 'radio'"
+            v-model="form[key]"
+            v-bind="attrs"
+          >
+            <el-radio
+              v-for="radioItem in opts"
+              :key="radioItem.label"
+              :label="radioItem.label"
+              >{{ radioItem.label }}</el-radio
+            >
+          </el-radio-group>
+          <!-- 颜色选择 -->
+          <el-color-picker
+            v-else-if="type === 'color-picker'"
+            v-model="form[key]"
+            v-bind="attrs"
+          />
+          <!-- 级联选择 -->
+          <el-cascader
+            v-else-if="type === 'cascader'"
+            v-model="form[key]"
+            :clearable="!attrs?.disabled"
+            v-bind="attrs"
+          />
+          <!-- 滑块 -->
+          <el-slider
+            v-else-if="type === 'slider'"
+            v-model="form[key]"
+            v-bind="attrs"
+          />
+          <!-- 评分 -->
+          <el-slider
+            v-else-if="type === 'rate'"
+            v-model="form[key]"
+            v-bind="attrs"
+          />
+        </el-form-item>
+      </el-col>
+      <el-col :xs="24" :sm="12" :md="8" :lg="8" :xl="4">
+        <el-form-item>
+          <el-button type="primary" @click="submitForm(searchFormRef)"
+            >搜索</el-button
+          >
+          <el-button @click="resetForm(searchFormRef)">重置</el-button>
+        </el-form-item>
+      </el-col>
+    </el-row>
   </el-form>
 </template>
 
 <style lang="scss" scoped>
-.searchForm {
-  display: grid;
-  // grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-  grid-template-columns: minmax(350px, 1fr);
-  grid-gap: 15px;
-
-  .el-select,
-  .el-input {
-    width: 100%;
-  }
+:deep(.el-form-item__content > div) {
+  width: 100%;
 }
 </style>
