@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { onBeforeUnmount, onMounted, ref, watch } from "vue";
-
-import { addClass, removeClass } from "@/utils/index";
-
-const show = ref(false);
+import { addClass, removeClass, hasClass } from "@/utils/index";
+import { useSettingsStore } from "@/store/modules/settings";
+// const show = ref(false);
+const settingsStore = useSettingsStore();
 
 defineProps({
   buttonTop: {
@@ -12,16 +12,19 @@ defineProps({
   },
 });
 
-watch(show, (value) => {
-  if (value) {
-    addEventClick();
+watch(
+  () => settingsStore.showDrawer,
+  (value) => {
+    if (value) {
+      addEventClick();
+    }
+    if (value) {
+      addClass(document.body, "showRightPanel");
+    } else {
+      removeClass(document.body, "showRightPanel");
+    }
   }
-  if (value) {
-    addClass(document.body, "showRightPanel");
-  } else {
-    removeClass(document.body, "showRightPanel");
-  }
-});
+);
 
 function addEventClick() {
   window.addEventListener("click", closeSidebar, { passive: true });
@@ -29,11 +32,14 @@ function addEventClick() {
 
 function closeSidebar(evt: any) {
   // 主题选择点击不关闭
-  let parent = evt.target.closest(".right-panel-container");
-  if (!parent) {
-    show.value = false;
+  if (evt.target.className === "right-panel-overlay") {
+    closeSidebarFn();
     window.removeEventListener("click", closeSidebar);
   }
+}
+
+function closeSidebarFn() {
+  settingsStore.changeSetting({ key: "showDrawer", value: false });
 }
 
 const rightPanel = ref();
@@ -53,18 +59,23 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div ref="rightPanel" :class="{ show: show }">
-    <div class="right-panel-overlay" />
+  <div
+    ref="rightPanel"
+    class="mask"
+    :class="{ show: settingsStore.showDrawer }"
+  >
+    <div class="right-panel-overlay"></div>
     <div class="right-panel-container">
       <div
+        v-show="settingsStore.showDrawer"
         class="right-panel-btn"
         :style="{
           top: buttonTop + 'px',
         }"
-        @click="show = !show"
+        @click="closeSidebarFn"
       >
-        <i-ep-close v-show="show" />
-        <i-ep-setting v-show="!show" />
+        <i-ep-close />
+        <!-- <i-ep-setting v-show="!settingsStore.showDrawer" /> -->
       </div>
       <div>
         <slot />

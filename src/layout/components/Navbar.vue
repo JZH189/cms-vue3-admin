@@ -5,6 +5,9 @@ import { useAppStore } from "@/store/modules/app";
 import { useTagsViewStore } from "@/store/modules/tagsView";
 import { useUserStore } from "@/store/modules/user";
 import { resetRouter } from "@/router";
+import { useSettingsStore } from "@/store/modules/settings";
+
+const settingsStore = useSettingsStore();
 
 const appStore = useAppStore();
 const tagsViewStore = useTagsViewStore();
@@ -45,6 +48,10 @@ function logout() {
       });
   });
 }
+
+function showSidebar() {
+  settingsStore.changeSetting({ key: "showDrawer", value: true });
+}
 </script>
 
 <template>
@@ -60,7 +67,7 @@ function logout() {
     </div>
 
     <!-- 右侧导航设置 -->
-    <div class="flex">
+    <div class="flex" f-c>
       <!-- 导航栏设置(窄屏隐藏)-->
       <div v-if="device !== 'mobile'" class="setting-container">
         <!--全屏 -->
@@ -74,7 +81,10 @@ function logout() {
           <size-select class="setting-item" />
         </el-tooltip>
       </div>
-
+      <!-- 全局设置 -->
+      <el-tooltip content="主题设置" effect="dark" placement="bottom">
+        <div class="i-carbon:settings-view setting" @click="showSidebar"></div>
+      </el-tooltip>
       <!-- 用户头像 -->
       <el-dropdown trigger="click">
         <div class="avatar-container">
@@ -107,6 +117,7 @@ function logout() {
 
   .setting-container {
     display: flex;
+    gap: 5px;
     align-items: center;
 
     .setting-item {
@@ -121,6 +132,21 @@ function logout() {
       &:hover {
         background: rgb(249 250 251 / 100%);
       }
+    }
+  }
+
+  .setting {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    margin: 0 5px;
+    line-height: 20px;
+    color: #5a5e66;
+    text-align: center;
+    cursor: pointer;
+
+    &:hover {
+      background-color: rgb(46 64 82);
     }
   }
 
