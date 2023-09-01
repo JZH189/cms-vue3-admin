@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { reactive, ref } from "vue";
 import { FormItemType } from "../enum";
+import { usePagination } from '../compose/usePagination';
 import type { FormInstance, FormRules, FormItemProps } from "element-plus";
 
 //formItem 接口
@@ -15,6 +16,7 @@ interface IformItem {
 }
 
 interface Iprops {
+  queryApi: string;
   formData: IformItem[];
   rules?: FormRules;
 }
@@ -70,29 +72,52 @@ watch(
   }
 );
 
-// 提交
-async function submitForm(formEl: FormInstance | undefined) {
-  if (!formEl) return;
-  await formEl.validate((valid) => {
+/**
+ * 获取分页数据和请求状态
+ */
+const { loading, doSearch, doReset, tableList, pagination } = usePagination(prop.queryApi)
+
+/**
+ * 提交表单
+ */
+async function submitForm() {
+  if(!searchFormRef.value) return false
+  await searchFormRef.value.validate((valid) => {
     if (valid) {
+      doSearch(toRaw(form))
       emit("onSearch", toRaw(form));
     }
   });
 }
-// 重置
-function resetForm(formEl: FormInstance | undefined) {
-  if (!formEl) return;
-  formEl.resetFields();
+/**
+ * 重置表单
+ */
+async function resetForm() {
+  if(!searchFormRef.value) return false
+  searchFormRef.value.resetFields();
   //初始化form
   Object.assign(form, initForm);
+  await doReset(toRaw(form))
   emit("onReset");
 }
+
+/**
+ * 暴露api
+ */
+defineExpose({
+  formRef: searchFormRef,
+  formData: form,
+  submitForm,
+  resetForm,
+  loading,
+  tableList,
+  pagination,
+})
 </script>
 
 <template>
   <el-form
     ref="searchFormRef"
-    class="searchForm"
     :model="form"
     :rules="rules"
     label-width="120px"
@@ -223,10 +248,8 @@ function resetForm(formEl: FormInstance | undefined) {
       </el-col>
       <el-col :xs="24" :sm="12" :md="8" :lg="8" :xl="4">
         <el-form-item>
-          <el-button type="primary" @click="submitForm(searchFormRef)"
-            >搜索</el-button
-          >
-          <el-button @click="resetForm(searchFormRef)">重置</el-button>
+          <el-button type="primary" @click="submitForm">搜索</el-button>
+          <el-button @click="resetForm">重置</el-button>
         </el-form-item>
       </el-col>
     </el-row>

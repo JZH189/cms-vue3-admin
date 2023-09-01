@@ -1,6 +1,8 @@
 <script lang="ts" setup>
 import SearchForm, { FormItemType } from "@/components/SearchForm";
-import { searchTable } from '@/utils/search-table';
+
+const formRef = ref()
+
 const formData = [
   {
     label: "文本框：",
@@ -129,58 +131,33 @@ const formData = [
 ];
 
 const rules = {
-  textarea: [{ required: true, message: "请输入", trigger: "blur" }],
-  input: [{ required: true, message: "请输入", trigger: "blur" }],
-  region: [{ required: true, message: "请选择", trigger: ["blur", "change"] }],
+  textarea: [{ required: false, message: "请输入", trigger: "blur" }],
+  input: [{ required: false, message: "请输入", trigger: "blur" }],
+  region: [{ required: false, message: "请选择", trigger: ["blur", "change"] }],
   selectMultiple: [
-    { required: true, message: "请选择", trigger: ["blur", "change"] },
+    { required: false, message: "请选择", trigger: ["blur", "change"] },
   ],
   timePicker: [
-    { required: true, message: "请选择", trigger: ["blur", "change"] },
+    { required: false, message: "请选择", trigger: ["blur", "change"] },
   ],
   switch: [{ required: false, message: "请选择", trigger: ["blur", "change"] }],
   checkbox: [
-    { required: true, message: "请选择", trigger: ["blur", "change"] },
+    { required: false, message: "请选择", trigger: ["blur", "change"] },
   ],
-  radio: [{ required: true, message: "请选择", trigger: ["blur", "change"] }],
+  radio: [{ required: false, message: "请选择", trigger: ["blur", "change"] }],
   colorPicker: [
-    { required: true, message: "请选择", trigger: ["blur", "change"] },
+    { required: false, message: "请选择", trigger: ["blur", "change"] },
   ],
-  slider: [{ required: true, message: "请选择", trigger: ["blur", "change"] }],
-  rate: [{ required: true, message: "请选择", trigger: ["blur", "change"] }],
+  slider: [{ required: false, message: "请选择", trigger: ["blur", "change"] }],
+  rate: [{ required: false, message: "请选择", trigger: ["blur", "change"] }],
 };
-
-const {
-  searchList,
-  loading,
-  tableList,
-  pagination,
-  resetSearchParams,
-  doSearch } = searchTable({
-    queryApi: '/admin/log/login/loginPage',
-    searchData: formData,
-  })
-
-  function onSearch() {}
-  
-  function onReset() { }
-  
-  onMounted(async () => {
-    await doSearch({
-      currentPage: 1,
-      pageSize: 100,
-      param: {
-        account: 'admin'
-      }})
-    console.log('tableList: ', tableList.value);
-})
 </script>
 
 <template>
   <SearchForm
+    ref="formRef"
+    query-api="/admin/log/login/loginPage"
     :form-data="formData"
     :rules="rules"
-    @on-search="onSearch"
-    @on-reset="onReset"
   ></SearchForm>
 </template>
