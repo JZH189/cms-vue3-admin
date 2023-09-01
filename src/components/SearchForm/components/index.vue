@@ -25,8 +25,7 @@ const prop = defineProps<Iprops>();
 
 const emit = defineEmits<{
   (e: "onSearch", value: any): void;
-  (e: "onReset"): void;
-  (e: "onItemChang", value: any): void;
+  (e: "onReset", value: any): void;
 }>();
 
 function needArr(item: IformItem): boolean {
@@ -82,10 +81,13 @@ const { loading, doSearch, doReset, tableList, pagination } = usePagination(prop
  */
 async function submitForm() {
   if(!searchFormRef.value) return false
-  await searchFormRef.value.validate((valid) => {
+  await searchFormRef.value.validate(async (valid) => {
     if (valid) {
-      doSearch(toRaw(form))
-      emit("onSearch", toRaw(form));
+      await doSearch(toRaw(form))
+      emit("onSearch", {
+        tableList: toRaw(tableList.value),
+        pagination: toRaw(pagination),
+      });
     }
   });
 }
@@ -98,7 +100,10 @@ async function resetForm() {
   //初始化form
   Object.assign(form, initForm);
   await doReset(toRaw(form))
-  emit("onReset");
+  emit("onReset", {
+    tableList: toRaw(tableList.value),
+    pagination: toRaw(pagination),
+  });
 }
 
 /**
@@ -109,9 +114,9 @@ defineExpose({
   formData: form,
   submitForm,
   resetForm,
-  loading,
-  tableList,
-  pagination,
+  loading: toRaw(loading.value),
+  tableList: toRaw(tableList.value),
+  pagination: toRaw(pagination),
 })
 </script>
 

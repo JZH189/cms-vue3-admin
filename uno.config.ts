@@ -26,9 +26,9 @@ export default defineConfig({
       extraProperties: {
         display: "inline-block",
         overflow: "hidden",
-        width: "1em",
-        height: "1em",
-        "vertical-align": "-0.15em",
+        width: "18px",
+        height: "18px",
+        "vertical-align": "center",
       },
     }),
   ],

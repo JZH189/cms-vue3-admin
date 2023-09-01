@@ -9,3 +9,5 @@ declare interface PromiseFn<T = any, R = T> {
 declare type EmitFn = (event: any, ...args: any[]) => void;
 
 declare type Recordable<T = any> = Record<string, T>;
+
+declare type Nullable<T> = T | null | undefined;

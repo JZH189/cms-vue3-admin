@@ -1,7 +1,14 @@
 <script lang="ts" setup>
 import SearchForm, { FormItemType } from "@/components/SearchForm";
+import SuperTable from "@/components/SuperTable"
 
 const formRef = ref()
+
+const data = ref([])
+
+const pagination = ref(null)
+
+const loading = ref(false)
 
 const formData = [
   {
@@ -151,6 +158,30 @@ const rules = {
   slider: [{ required: false, message: "请选择", trigger: ["blur", "change"] }],
   rate: [{ required: false, message: "请选择", trigger: ["blur", "change"] }],
 };
+
+function assginData({ tableList, pagination }) {
+  data.value = tableList
+  pagination.value = pagination
+}
+
+function onSearch({tableList, pagination}) {
+  assginData({tableList, pagination})
+}
+
+function onReset({tableList, pagination}) {
+  assginData({tableList, pagination})
+}
+
+watch(() => formRef.value, (val) => {
+  console.log('formRef: ', val);
+})
+
+watchEffect(() => {
+  if (formRef.value) {
+    pagination.value = formRef.value.pagination
+    loading.value = formRef.value.loading
+  }
+})
 </script>
 
 <template>
@@ -159,5 +190,17 @@ const rules = {
     query-api="/admin/log/login/loginPage"
     :form-data="formData"
     :rules="rules"
+    @on-search="onSearch"
+    @on-reset="onReset"
   ></SearchForm>
+  <SuperTable :loading="loading" :table-data="data" :pagination="pagination">
+    <el-table-column label="用户ID" prop="userId"></el-table-column>
+    <el-table-column label="登录ip" prop="ip"></el-table-column>
+    <el-table-column label="日志类型">
+      <template #default="{row}">{{ row.type === 1 ? '登录日志' : '操作日志' }}</template>
+    </el-table-column>
+    <el-table-column label="状态">
+      <template #default="{row}">{{ row.status === 1 ? '成功' : '失败' }}</template>
+    </el-table-column>
+  </SuperTable>
 </template>

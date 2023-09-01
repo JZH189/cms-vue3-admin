@@ -25,7 +25,7 @@ const props = defineProps({
   },
   size: {
     type: String,
-    default: "1em",
+    default: "18px",
   },
 });
 
@@ -35,8 +35,8 @@ const symbolId = computed(() => `#${props.prefix}-${props.iconClass}`);
 <style scoped>
 .svg-icon {
   display: inline-block;
-  width: 1em;
-  height: 1em;
+  width: 18px;
+  height: 18px;
   overflow: hidden;
   vertical-align: -0.15em; /* 因icon大小被设置为和字体大小一致，而span等标签的下边缘会和字体的基线对齐，故需设置一个往下的偏移比例，来纠正视觉上的未对齐效果 */
   outline: none;

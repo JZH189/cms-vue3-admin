@@ -93,7 +93,6 @@
 
 <script setup lang="ts">
 import router from "@/router";
-import SvgIcon from "@/components/SvgIcon/index.vue";
 import AppDarkMode from "@/layout/components/AppDarkMode/index.vue";
 // 状态管理依赖
 import { useUserStore } from "@/store/modules/user";
