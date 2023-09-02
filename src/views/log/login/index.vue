@@ -1,15 +1,5 @@
 <script lang="ts" setup>
-import SearchForm, { FormItemType } from "@/components/SearchForm";
-import SuperTable from "@/components/SuperTable"
-
-const formRef = ref()
-
-const data = ref([])
-
-const pagination = ref(null)
-
-const loading = ref(false)
-
+import SuperTable, { FormItemType } from "@/components/SuperTable"
 const formData = [
   {
     label: "文本框：",
@@ -136,7 +126,6 @@ const formData = [
     value: undefined,
   },
 ];
-
 const rules = {
   textarea: [{ required: false, message: "请输入", trigger: "blur" }],
   input: [{ required: false, message: "请输入", trigger: "blur" }],
@@ -158,42 +147,14 @@ const rules = {
   slider: [{ required: false, message: "请选择", trigger: ["blur", "change"] }],
   rate: [{ required: false, message: "请选择", trigger: ["blur", "change"] }],
 };
-
-function assginData({ tableList, pagination }) {
-  data.value = tableList
-  pagination.value = pagination
-}
-
-function onSearch({tableList, pagination}) {
-  assginData({tableList, pagination})
-}
-
-function onReset({tableList, pagination}) {
-  assginData({tableList, pagination})
-}
-
-watch(() => formRef.value, (val) => {
-  console.log('formRef: ', val);
-})
-
-watchEffect(() => {
-  if (formRef.value) {
-    pagination.value = formRef.value.pagination
-    loading.value = formRef.value.loading
-  }
-})
 </script>
 
 <template>
-  <SearchForm
-    ref="formRef"
+  <SuperTable 
     query-api="/admin/log/login/loginPage"
     :form-data="formData"
-    :rules="rules"
-    @on-search="onSearch"
-    @on-reset="onReset"
-  ></SearchForm>
-  <SuperTable :loading="loading" :table-data="data" :pagination="pagination">
+    :form-rules="rules"
+    >
     <el-table-column label="用户ID" prop="userId"></el-table-column>
     <el-table-column label="登录ip" prop="ip"></el-table-column>
     <el-table-column label="日志类型">

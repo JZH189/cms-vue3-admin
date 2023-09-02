@@ -1,5 +1,13 @@
 <template>
   <div ref="wrapRef">
+    <search-form
+    ref="formRef"
+    :form-data="props.formData"
+    :rules="props.formRules"
+    :label-width="props.labelWidth"
+    @on-search="queryForm"
+    @on-reset="resetForm"
+    ></search-form>
     <!-- 表格操作按钮 -->
     <div f-b-c mb-2>
       <div class="header-button-lf">
@@ -20,23 +28,25 @@
       </div>
     </div>
     <!-- 表格部分 -->
-    <el-table 
+    <el-table
       ref="tableRef"
       v-bind="mergeAttrs"
-      :data="tableData"
+      v-loading="loading"
+      :data="tableList"
       :height="tableHeight"
       @row-dblclick="onRowDblclick">
       <defaultSlots :key="key" />
     </el-table>
     <!-- 分页部分 -->
     <el-pagination 
+      v-if="props.showPages"
       ref="pageRef" 
-      v-model:current-page="pageData.current"
-      v-model:page-size="pageData.pageSize"
+      v-model:current-page="pagination.currentPage"
+      v-model:page-size="pagination.pageSize"
       class="pagination" 
-      :page-sizes="pageData.pageSizes"
-      :total="pageData.total"
-      small 
+      :page-sizes="pagination.pageSizes"
+      :total="pagination.total"
+      small
       background
       layout="total, sizes, prev, pager, next, jumper"
       @size-change="handleSizeChange"
@@ -58,33 +68,39 @@ import {
   nextTick,
   toRaw,
 } from 'vue'
-import ColSetting from './components/ColSetting.vue'
-import FullscreenSetting from './components/FullscreenSetting.vue'
+import SearchForm from './SearchForm.vue'
+import ColSetting from './ColSetting.vue'
+import FullscreenSetting from './FullscreenSetting.vue'
 import { useWindowSizeFn } from '@/hooks/useWindowSizeFn'
-import { useTable } from './hooks/useTable'
-import { createTableContext } from './hooks/useTableContext'
-import { usePagination } from './hooks/usePagination'
+import { useTable } from '../hooks/useTable'
+import { createTableContext } from '../hooks/useTableContext'
+import { usePagination } from '../hooks/usePagination'
+import type { FormRules } from "element-plus";
 
 interface ItableProp {
-  tableData: any[];
-  pagination: any; 
-  loading?: boolean;
+  formData: any; //表单字段
+  queryApi: string; //请求api
+  formRules?: FormRules; //表单验证
+  labelWidth?: string | number;
   summaryMethod?: Function,
   showSummary?: boolean,
   stripe?: boolean //是否开启斑马条纹
   border?: boolean //是否显示边框
   highlightCurrentRow?: boolean //高亮当前行
   emptyText?: string //无数据的时候显示文字
+  showPages?: boolean //是否展示分页
 }
 // 定义props
 const props = withDefaults(defineProps<ItableProp>(), {
-  loading: false,
+  formRules: undefined,
+  labelWidth: undefined,
   summaryMethod: undefined,
   showSummary: false,
   stripe: true,
   border: true,
   highlightCurrentRow: true,
   emptyText: '暂无数据',
+  showPages: true
 })
 const emit = defineEmits<{
   (e: 'toggleForm', val: boolean): void,
@@ -101,27 +117,47 @@ const {
   tableColumns,
   defaultSlots,
 } = useTable(props)
+
+const formRef = ref()
+
+//获取分页数据和请求状态
+const { loading, doSearch, doReset, tableList, pagination } = usePagination(props.queryApi)
+
+//表单查询
+function queryForm(formData) {
+  doSearch(formData)
+}
+
+//表单重置
+function resetForm(formData) {
+  doReset(formData)
+}
+
+//获取表单数据
+function getFormData(){
+  return formRef.value?.formData || {}
+}
+
 //当某一行被双击时
 function onRowDblclick(row) {
   emit('rowDblclick', row)
 }
-const pageData = usePagination()
 
-watch(() => props, (val) => {
-  console.log('pagination: ', val.pagination);
-})
 //每页最大条数值变化的方法
 function handleSizeChange(val: number): void {
-  pageData.pageSize = val
+  pagination.pageSize = val
+  doSearch(getFormData())
 }
 //页码数据变化的方法
 function handleCurrentChange(val: number): void {
-  pageData.current = val
+  pagination.currentPage = val
+  doSearch(getFormData())
 }
 //显/隐列信息
 function updateColumn(val: any[]) {
   tableColumns.storage = val
 }
+
 const showForm = ref(true)
 const wrapRef = ref()
 const tableRef = ref()
@@ -148,6 +184,8 @@ defineExpose({
   },
   // 列的数据
   columns: computed(() => readonly(tableColumns.render)),
+  doSearch,
+  doReset,
 })
 onMounted(() => {
   getTableHeight()
