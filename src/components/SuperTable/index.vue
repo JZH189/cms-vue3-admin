@@ -61,9 +61,9 @@ import {
 import ColSetting from './components/ColSetting.vue'
 import FullscreenSetting from './components/FullscreenSetting.vue'
 import { useWindowSizeFn } from '@/hooks/useWindowSizeFn'
-import { useTable } from './composables/useTable'
-import { createTableContext } from './composables/useTableContext'
-import { usePagination } from './composables/usePagination'
+import { useTable } from './hooks/useTable'
+import { createTableContext } from './hooks/useTableContext'
+import { usePagination } from './hooks/usePagination'
 
 interface ItableProp {
   tableData: any[];

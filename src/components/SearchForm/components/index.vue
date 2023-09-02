@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { reactive, ref } from "vue";
 import { FormItemType } from "../enum";
-import { usePagination } from '../compose/usePagination';
+import { usePagination } from '../hooks/usePagination';
 import type { FormInstance, FormRules, FormItemProps } from "element-plus";
 
 //formItem 接口

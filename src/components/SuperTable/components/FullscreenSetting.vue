@@ -9,7 +9,7 @@
 
 <script setup lang="ts">
 import { useFullscreen } from '@vueuse/core'
-import { useTableContext } from '../composables/useTableContext'
+import { useTableContext } from '../hooks/useTableContext'
 const table = useTableContext()
 const { isFullscreen, toggle } = useFullscreen(table.wrapRef)
 </script>
