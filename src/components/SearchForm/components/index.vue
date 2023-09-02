@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import { reactive, ref } from "vue";
 import { FormItemType } from "../enum";
-import { usePagination } from '../hooks/usePagination';
 import type { FormInstance, FormRules, FormItemProps } from "element-plus";
 
 //formItem 接口
@@ -16,12 +15,15 @@ interface IformItem {
 }
 
 interface Iprops {
-  queryApi: string;
   formData: IformItem[];
+  labelWidth?: string | number;
   rules?: FormRules;
 }
 
-const prop = defineProps<Iprops>();
+const props = withDefaults(defineProps<Iprops>(), {
+  labelWidth: '120px',
+  rules: undefined,
+});
 
 const emit = defineEmits<{
   (e: "onSearch", value: any): void;
@@ -62,7 +64,7 @@ function initFormFields(data: any[]) {
 }
 
 watch(
-  () => prop,
+  () => props,
   ({ formData }) => {
     initFormFields(formData);
   },
@@ -72,22 +74,13 @@ watch(
 );
 
 /**
- * 获取分页数据和请求状态
- */
-const { loading, doSearch, doReset, tableList, pagination } = usePagination(prop.queryApi)
-
-/**
  * 提交表单
  */
 async function submitForm() {
   if(!searchFormRef.value) return false
   await searchFormRef.value.validate(async (valid) => {
     if (valid) {
-      await doSearch(toRaw(form))
-      emit("onSearch", {
-        tableList: toRaw(tableList.value),
-        pagination: toRaw(pagination),
-      });
+      emit("onSearch", toRaw(form));
     }
   });
 }
@@ -99,25 +92,8 @@ async function resetForm() {
   searchFormRef.value.resetFields();
   //初始化form
   Object.assign(form, initForm);
-  await doReset(toRaw(form))
-  emit("onReset", {
-    tableList: toRaw(tableList.value),
-    pagination: toRaw(pagination),
-  });
+  emit("onReset", toRaw(form));
 }
-
-/**
- * 暴露api
- */
-defineExpose({
-  formRef: searchFormRef,
-  formData: form,
-  submitForm,
-  resetForm,
-  loading: toRaw(loading.value),
-  tableList: toRaw(tableList.value),
-  pagination: toRaw(pagination),
-})
 </script>
 
 <template>
@@ -125,7 +101,7 @@ defineExpose({
     ref="searchFormRef"
     :model="form"
     :rules="rules"
-    label-width="120px"
+    :label-width="typeof props.labelWidth === 'string' ?  props.labelWidth : `${props.labelWidth}px`"
   >
     <el-row :gutter="10">
       <el-col
@@ -136,7 +112,7 @@ defineExpose({
           opts,
           attrs,
           formItemAttrs,
-        } in prop.formData"
+        } in props.formData"
         :key="key"
         :xs="24"
         :sm="12"
