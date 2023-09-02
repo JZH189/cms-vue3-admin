@@ -29,9 +29,9 @@ export function usePagination(queryApi: string): ItableReturn {
   //分页
   const pagination = reactive<Ipagination>({
     currentPage: 1,
-    pageSize: 3,
+    pageSize: 50,
     total: 0,
-    pageSizes: [3, 10, 50, 100, 200],
+    pageSizes: [50, 100, 200],
   });
   //响应list
   const tableList: any = ref([]);
