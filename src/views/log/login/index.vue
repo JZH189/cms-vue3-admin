@@ -1,5 +1,7 @@
 <script lang="ts" setup>
 import SuperTable, { FormItemType } from "@/components/SuperTable"
+import { renderConfirm } from "@/utils/render"
+
 const formData = [
   {
     label: "文本框：",
@@ -147,6 +149,19 @@ const rules = {
   slider: [{ required: false, message: "请选择", trigger: ["blur", "change"] }],
   rate: [{ required: false, message: "请选择", trigger: ["blur", "change"] }],
 };
+
+const btn = renderConfirm({
+  beforeClose: function (action, instance, done) {
+    console.log('关闭前的回调');
+    setTimeout(() => {
+      instance.confirmButtonLoading = false
+      done()
+    }, 3000)
+  },
+  confirmFn: function (action) {
+    console.log('confirmFn', action);
+  }
+})
 </script>
 
 <template>
@@ -163,5 +178,8 @@ const rules = {
     <el-table-column label="状态">
       <template #default="{row}">{{ row.status === 1 ? '成功' : '失败' }}</template>
     </el-table-column>
+    <template #tableHeader>
+      <btn>模拟操作</btn>
+    </template>
   </SuperTable>
 </template>
