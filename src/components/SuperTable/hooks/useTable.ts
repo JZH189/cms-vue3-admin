@@ -17,24 +17,34 @@ export function useTable(props) {
     multipleSelection.value = val
   }
   function getTableHeight() {
-    const tableForm = document.getElementsByClassName('grid-form')[0]
-    const pageEl = document.getElementsByClassName('pagination')[0]
-    const appHeaderHeight = 50
-    const outerPageHeight = 90
-    const tableFormHieght = tableForm ? unref((tableForm as HTMLElement).offsetHeight) : 0
-    const tableHeaderHeight = 44
-    const tableTitleHeight = 40
-    const paginationHeight = pageEl ? unref((pageEl as HTMLElement).offsetHeight) : 0
-    const documentHeight = document.documentElement.offsetHeight
-    const countHeight = appHeaderHeight + outerPageHeight + tableFormHieght + tableHeaderHeight + tableTitleHeight + paginationHeight
-    let height = 0
+    const tableForm = document.getElementsByClassName("formRef")[0];
+    const pageEl = document.getElementsByClassName("pagination")[0];
+    const appHeaderHeight = 50;
+    const tableFormHieght = tableForm
+      ? unref((tableForm as HTMLElement).getBoundingClientRect().height)
+      : 0;
+    const tableHeaderHeight = 44;
+    const tableTitleHeight = 40;
+    const paginationHeight = pageEl
+      ? unref((pageEl as HTMLElement).getBoundingClientRect().height)
+      : 0;
+    const documentHeight =
+      document.documentElement.getBoundingClientRect().height;
+    const countHeight =
+      appHeaderHeight +
+      tableFormHieght +
+      tableHeaderHeight +
+      tableTitleHeight +
+      paginationHeight;
+    //表格内容高度等于页面总高度-顶部导航栏-表单高度-表格操作栏高度-分页组件高度
+    let height = 0;
     if (!tableFormHieght) {
-      height = documentHeight - 250
+      height = documentHeight - 280;
     } else {
-      height = documentHeight - countHeight
+      height = documentHeight - countHeight - 30;
     }
-    tableHeight.value = height
-    return height
+    tableHeight.value = height;
+    return height;
   }
   const mergeAttrs = computed(() => ({
     onSelectionChange: handleSelectionChange,

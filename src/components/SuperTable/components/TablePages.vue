@@ -1,7 +1,9 @@
 <template>
   <div ref="wrapRef">
     <search-form
+    v-if="showForm"
     ref="formRef"
+    class="formRef"
     :form-data="props.formData"
     :rules="props.formRules"
     :label-width="props.labelWidth"
@@ -14,7 +16,6 @@
         <slot name="tableHeader"></slot>
       </div>
       <div class="header-button-ri">
-        <FullscreenSetting />
         <el-button
           style="padding: 0px; border: none"
           size="small" @click="openColSetting">
@@ -70,7 +71,6 @@ import {
 } from 'vue'
 import SearchForm from './SearchForm.vue'
 import ColSetting from './ColSetting.vue'
-import FullscreenSetting from './FullscreenSetting.vue'
 import { useWindowSizeFn } from '@/hooks/useWindowSizeFn'
 import { useTable } from '../hooks/useTable'
 import { createTableContext } from '../hooks/useTableContext'
@@ -103,7 +103,6 @@ const props = withDefaults(defineProps<ItableProp>(), {
   showPages: true
 })
 const emit = defineEmits<{
-  (e: 'toggleForm', val: boolean): void,
   (e: 'rowDblclick', val: object): void,
 }>()
 
@@ -169,7 +168,6 @@ function openColSetting() {
 }
 async function toggleForm() {
   showForm.value = !showForm.value
-  emit('toggleForm', showForm.value)
   await nextTick()
   getTableHeight()
 }
@@ -177,7 +175,6 @@ async function toggleForm() {
 useWindowSizeFn(getTableHeight)
 createTableContext({ wrapRef, tableRef })
 defineExpose({
-  showForm: toRaw(showForm), //是否显示表单
   selections: toRaw(multipleSelection), //多选的记录数据
   clearSelection: function () {
     tableRef.value.clearSelection()
@@ -189,6 +186,8 @@ defineExpose({
 })
 onMounted(() => {
   getTableHeight()
+  //初始化请求
+  doSearch(getFormData())
 })
 </script>
 
