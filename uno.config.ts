@@ -28,7 +28,6 @@ export default defineConfig({
         overflow: "hidden",
         width: "18px",
         height: "18px",
-        "vertical-align": "center",
       },
     }),
   ],

@@ -84,7 +84,7 @@ function showSidebar() {
       <!-- 全局设置 -->
       <el-tooltip content="主题设置" effect="dark" placement="bottom">
         <div class="setting" @click="showSidebar">
-          <i class="i-carbon:settings-view" style="width: 20px; height: 20px;"></i>
+          <i class="i-carbon:settings-view"></i>
         </div>
       </el-tooltip>
       <!-- 用户头像 -->

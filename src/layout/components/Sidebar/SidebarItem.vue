@@ -74,9 +74,9 @@ function resolvePath(routePath: string) {
       <app-link v-if="currentRoute.meta" :to="resolvePath(currentRoute.path)">
         <el-menu-item :index="resolvePath(currentRoute.path)">
           <i
-              v-if="currentRoute.meta?.icon"
-              :class="`i-${currentRoute.meta.icon}`"
-            ></i>
+            v-if="currentRoute.meta?.icon"
+            :class="`i-${currentRoute.meta.icon}`"
+          ></i>
           <template #title>
             {{ currentRoute.meta.title }}
           </template>
@@ -87,10 +87,7 @@ function resolvePath(routePath: string) {
     <!-- 包含多个子路由  -->
     <el-sub-menu v-else :index="resolvePath(item.path)" teleported>
       <template #title>
-        <i
-          v-if="item.meta?.icon"
-          :class="`i-${item.meta.icon}`"
-        ></i>
+        <i v-if="item.meta?.icon" :class="`i-${item.meta.icon}`"></i>
         <span v-if="item.meta && item.meta.title">{{ item.meta.title }}</span>
       </template>
       <sidebar-item
@@ -102,3 +99,9 @@ function resolvePath(routePath: string) {
     </el-sub-menu>
   </div>
 </template>
+
+<style lang="scss" scoped>
+.el-menu-item {
+  line-height: normal;
+}
+</style>
