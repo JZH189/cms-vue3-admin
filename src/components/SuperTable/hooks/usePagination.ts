@@ -24,7 +24,7 @@ interface ItableReturn {
  * @returns {*}
  */
 export function usePagination(props: any): ItableReturn {
-  const { queryApi, customRow } = props;
+  const { queryApi, customRow, noForm } = props;
   //加载状态
   const loading = ref(false);
   //分页
@@ -39,22 +39,31 @@ export function usePagination(props: any): ItableReturn {
   // 调用查询接口
   async function queryPages(params?: any) {
     loading.value = true;
-    const result = await API.post<Ipages>({
-      url: queryApi,
-      data: {
-        currentPage: pagination.currentPage || 1,
-        pageSize: pagination.pageSize || 100,
-        param: {
-          ...params,
+    let result: any
+    if (!noForm) {
+      result = await API.post<Ipages>({
+        url: queryApi,
+        data: {
+          currentPage: pagination.currentPage || 1,
+          pageSize: pagination.pageSize || 100,
+          param: {
+            ...params,
+          },
         },
-      },
-    });
+      });
+      tableList.value =
+        typeof customRow === "function" ? customRow(result.data) : result.data;
+      pagination.currentPage = result.pagination.currentPage;
+      pagination.pageSize = result.pagination.pageSize;
+      pagination.total = result.pagination.total;
+    } else {
+      result = await API.get({
+        url: queryApi,
+      });
+      tableList.value =
+        typeof customRow === "function" ? customRow(result.list) : result.list;
+    }
     loading.value = false;
-    tableList.value =
-      typeof customRow === "function" ? customRow(result.data) : result.data;
-    pagination.currentPage = result.pagination.currentPage;
-    pagination.pageSize = result.pagination.pageSize;
-    pagination.total = result.pagination.total;
   }
   //查询
   async function doSearch(params: any) {
@@ -62,6 +71,10 @@ export function usePagination(props: any): ItableReturn {
   }
   //重置
   async function doReset(params: any) {
+    if (noForm) {
+      await queryPages();
+      return
+    }
     pagination.currentPage = 1;
     pagination.pageSize = 100;
     await queryPages(params);

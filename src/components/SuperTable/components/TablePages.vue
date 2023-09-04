@@ -1,7 +1,7 @@
 <template>
   <div ref="wrapRef">
     <search-form
-      v-if="showForm"
+      v-if="showForm && !props.noForm"
       ref="formRef"
       class="formRef"
       :form-data="props.formData"
@@ -27,11 +27,20 @@
           ></i>
         </el-button>
         <el-button
+          v-if="!props.noForm"
           style="padding: 0; border: none"
           size="small"
           @click="toggleForm"
         >
           <i class="i-carbon:search" style="width: 26px; height: 26px"></i>
+        </el-button>
+        <el-button
+          v-else
+          style="padding: 0; border: none"
+          size="small"
+          @click="doSearch"
+        >
+          <i class="i-carbon:restart" style="width: 26px; height: 26px"></i>
         </el-button>
       </div>
     </div>
@@ -48,7 +57,7 @@
     </el-table>
     <!-- 分页部分 -->
     <el-pagination
-      v-if="props.showPages"
+      v-if="props.showPages && !props.noForm"
       ref="pageRef"
       v-model:current-page="pagination.currentPage"
       v-model:page-size="pagination.pageSize"
@@ -81,7 +90,8 @@ import { usePagination } from "../hooks/usePagination";
 import type { FormRules } from "element-plus";
 
 interface ItableProp {
-  formData: any; //表单字段
+  noForm?: boolean; //是否禁用表单
+  formData?: any; //表单字段
   queryApi: string; //请求api
   formRules?: FormRules; //表单验证
   labelWidth?: string | number;
@@ -96,6 +106,8 @@ interface ItableProp {
 }
 // 定义props
 const props = withDefaults(defineProps<ItableProp>(), {
+  noForm: false, //默认启用表单
+  formData: undefined,
   formRules: undefined,
   labelWidth: undefined,
   customRow: undefined,

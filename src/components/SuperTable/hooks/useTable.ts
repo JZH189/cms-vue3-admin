@@ -39,7 +39,9 @@ export function useTable(props) {
     //表格内容高度等于页面总高度-顶部导航栏-表单高度-表格操作栏高度-分页组件高度
     let height = 0;
     if (!tableFormHieght) {
-      height = documentHeight - 280;
+      height = props.noForm
+        ? documentHeight - countHeight - 30
+        : documentHeight - 280;
     } else {
       height = documentHeight - countHeight - 30;
     }
