@@ -20,10 +20,11 @@ interface ItableReturn {
 
 /**
  *
- * @param queryApi 接口地址
+ * @param props
  * @returns {*}
  */
-export function usePagination(queryApi: string): ItableReturn {
+export function usePagination(props: any): ItableReturn {
+  const { queryApi, customRow } = props;
   //加载状态
   const loading = ref(false);
   //分页
@@ -49,7 +50,8 @@ export function usePagination(queryApi: string): ItableReturn {
       },
     });
     loading.value = false;
-    tableList.value = result.data;
+    tableList.value =
+      typeof customRow === "function" ? customRow(result.data) : result.data;
     pagination.currentPage = result.pagination.currentPage;
     pagination.pageSize = result.pagination.pageSize;
     pagination.total = result.pagination.total;
