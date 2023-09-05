@@ -60,7 +60,7 @@ function initFormFields(data: any[]) {
   //初始化initForm
   data.forEach((item) => {
     Object.assign(initForm, {
-      [item.key]: item.value ? item.value : needArr(item) ? [] : undefined,
+      [item.key]: typeof item.value !== 'undefined' ? item.value : needArr(item) ? [] : undefined,
     });
   });
   //初始化form
@@ -110,6 +110,7 @@ defineExpose({
 
 <template>
   <el-form
+    v-if="Object.keys(form).length"
     ref="searchFormRef"
     :model="form"
     :rules="rules"
@@ -212,7 +213,7 @@ defineExpose({
             <el-radio
               v-for="radioItem in opts"
               :key="radioItem.label"
-              :label="radioItem.label"
+              :label="radioItem.value"
               >{{ radioItem.label }}</el-radio
             >
           </el-radio-group>
