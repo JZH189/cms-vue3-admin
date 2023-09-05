@@ -63,6 +63,7 @@ const formData = ref([
     key: "icon",
     type: FormItemType.input,
     value: undefined,
+    prepend: "i-",
     attrs: {
       maxLength: "20",
       showWordLimit: true,
@@ -86,7 +87,7 @@ const formData = ref([
   },
   {
     label: "排序：",
-    key: "sort",
+    key: "orderNum",
     type: FormItemType.input,
     value: 0,
   },
@@ -116,6 +117,13 @@ function confirm() {
 
 function onSearch(val) {
   console.log("onSearch", val);
+}
+
+function editRow(raw: any) {
+  formData.value.forEach(item => {
+    item.value = raw[item.key]
+  })
+  dialogFormVisible.value = true
 }
 </script>
 
@@ -168,8 +176,8 @@ function onSearch(val) {
           type="primary"
           size="small"
           plain
-          @click="dialogFormVisible = true"
-          >编辑{{ row }}</el-button
+          @click="editRow(toRaw(row))"
+          >编辑</el-button
         >
         <el-button
           v-has-perm="'/sys/perm/menu/deleteMenu'"
@@ -184,7 +192,6 @@ function onSearch(val) {
   <el-dialog
     v-model="dialogFormVisible"
     title="Shipping address"
-    width="100%"
     :close-on-click-modal="false"
   >
     <SearchForm
