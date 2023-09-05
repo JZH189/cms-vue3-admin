@@ -81,7 +81,7 @@
 
 <script lang="ts" setup>
 import { computed, ref, readonly, onMounted, nextTick, toRaw } from "vue";
-import SearchForm from "./SearchForm.vue";
+import SearchForm from "@/components/SearchForm";
 import ColSetting from "./ColSetting.vue";
 import { useWindowSizeFn } from "@/hooks/useWindowSizeFn";
 import { useTable } from "../hooks/useTable";
