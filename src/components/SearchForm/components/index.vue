@@ -12,6 +12,8 @@ interface IformItem {
   attrs?: any; //字段Attributes
   opts?: any[]; //选项值
   formItemAttrs?: FormItemProps; //表单项Attributes
+  prepend?: string; //input的prepend slot
+  append?: string; //input的append slot
 }
 
 interface Iprops {
@@ -123,6 +125,8 @@ defineExpose({
     <el-row :gutter="10">
       <el-col
         v-for="{
+          prepend,
+          append,
           type,
           label,
           key,
@@ -144,7 +148,10 @@ defineExpose({
             v-model.trim="form[key]"
             :clearable="!attrs?.disabled"
             v-bind="attrs"
-          />
+          >
+          <template v-if="prepend" #prepend>{{ prepend }}</template>
+          <template v-if="append" #append>{{ append }}</template>
+          </el-input>
           <!-- 文本框 -->
           <el-input
             v-else-if="type === 'textarea'"
