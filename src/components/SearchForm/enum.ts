@@ -14,3 +14,8 @@ export enum FormItemType {
   slider = "slider", //滑块
   rate = "rate", //评分
 }
+
+export enum FormItemLayout {
+  column = "column", //表单项占据一整行
+  flex = "flex", //表单项宽度自适应
+}

@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { reactive, ref } from "vue";
-import { FormItemType } from "../enum";
+import { FormItemType, FormItemLayout } from "../enum";
 import type { FormInstance, FormRules, FormItemProps } from "element-plus";
 
 //formItem 接口
@@ -16,13 +16,17 @@ interface IformItem {
 
 interface Iprops {
   formData: IformItem[];
+  layout?: FormItemLayout;
+  showBtn?: boolean;
   labelWidth?: string | number;
   rules?: FormRules;
 }
 
 const props = withDefaults(defineProps<Iprops>(), {
-  labelWidth: '120px',
+  labelWidth: "120px",
   rules: undefined,
+  showBtn: true,
+  layout: FormItemLayout.flex, //默认表单项是响应式
 });
 
 const emit = defineEmits<{
@@ -73,11 +77,13 @@ watch(
   }
 );
 
+const columnLayout = computed(() => props.layout === FormItemLayout.column);
+
 /**
  * 提交表单
  */
 async function submitForm() {
-  if(!searchFormRef.value) return false
+  if (!searchFormRef.value) return false;
   await searchFormRef.value.validate(async (valid) => {
     if (valid) {
       emit("onSearch", toRaw(form));
@@ -88,12 +94,18 @@ async function submitForm() {
  * 重置表单
  */
 async function resetForm() {
-  if(!searchFormRef.value) return false
+  if (!searchFormRef.value) return false;
   searchFormRef.value.resetFields();
   //初始化form
   Object.assign(form, initForm);
   emit("onReset", toRaw(form));
 }
+
+defineExpose({
+  formData: toRaw(form),
+  submitForm,
+  resetForm,
+});
 </script>
 
 <template>
@@ -101,7 +113,11 @@ async function resetForm() {
     ref="searchFormRef"
     :model="form"
     :rules="rules"
-    :label-width="typeof props.labelWidth === 'string' ?  props.labelWidth : `${props.labelWidth}px`"
+    :label-width="
+      typeof props.labelWidth === 'string'
+        ? props.labelWidth
+        : `${props.labelWidth}px`
+    "
   >
     <el-row :gutter="10">
       <el-col
@@ -115,10 +131,10 @@ async function resetForm() {
         } in props.formData"
         :key="key"
         :xs="24"
-        :sm="12"
-        :md="8"
-        :lg="8"
-        :xl="4"
+        :sm="columnLayout ? 24 : 12"
+        :md="columnLayout ? 24 : 8"
+        :lg="columnLayout ? 24 : 8"
+        :xl="columnLayout ? 24 : 4"
       >
         <el-form-item :label="label" :prop="key" v-bind="formItemAttrs">
           <!-- 输入框 -->
@@ -227,7 +243,7 @@ async function resetForm() {
           />
         </el-form-item>
       </el-col>
-      <el-col :xs="24" :sm="12" :md="8" :lg="8" :xl="4">
+      <el-col v-if="props.showBtn" :xs="24" :sm="12" :md="8" :lg="8" :xl="4">
         <el-form-item>
           <el-button type="primary" @click="submitForm">搜索</el-button>
           <el-button @click="resetForm">重置</el-button>
