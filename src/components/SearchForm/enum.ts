@@ -3,6 +3,7 @@ export enum FormItemType {
   input = "input", //输入框
   textarea = "textarea", //文本框
   select = "select", //下拉选框
+  treeSelect = "tree-select", //树形选择
   timePicker = "time-picker", //时间选择
   timeSelect = "time-select", //时间下拉框
   datePicker = "date-picker", //日期选择

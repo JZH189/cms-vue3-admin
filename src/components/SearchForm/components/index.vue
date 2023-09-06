@@ -159,6 +159,21 @@ defineExpose({
             type="textarea"
             v-bind="attrs"
           />
+          <!-- 树形选择 -->
+          <el-tree-select
+            v-else-if="type === 'tree-select'"
+            v-model="form[key]"
+            :clearable="!attrs?.disabled"
+            v-bind="attrs"
+            :render-after-expand="false"
+          >
+            <el-option
+              v-for="opt in opts"
+              :key="opt.label"
+              :label="opt.label"
+              :value="opt.value"
+            ></el-option>
+          </el-tree-select>
           <!-- 下拉选择框 -->
           <el-select
             v-else-if="type === 'select'"
