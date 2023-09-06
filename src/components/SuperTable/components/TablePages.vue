@@ -121,6 +121,7 @@ const props = withDefaults(defineProps<ItableProp>(), {
 });
 const emit = defineEmits<{
   (e: "rowDblclick", val: object): void;
+  (e: "onTableDataUpdated", val: any): void;
 }>();
 
 //table设置
@@ -174,6 +175,10 @@ function handleCurrentChange(val: number): void {
 function updateColumn(val: any[]) {
   tableColumns.storage = val;
 }
+
+watchEffect(() => {
+  emit('onTableDataUpdated', toRaw(tableList.value))
+})
 
 const showForm = ref(true);
 const wrapRef = ref();
