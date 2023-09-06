@@ -6,6 +6,10 @@ import SearchForm, {
   FormItemLayout,
 } from "@/components/SearchForm";
 
+let isAdd = ref(false)
+let formBtnLoading = false
+let deleteMenuLoading = false
+const superTableRef = ref()
 const dialogFormVisible = ref(false);
 const formData = ref([
   {
@@ -27,6 +31,9 @@ const formData = ref([
       },
     ],
     value: undefined,
+    attrs: {
+      disabled: !isAdd.value
+    }
   },
   {
     label: "菜单名称：",
@@ -44,9 +51,8 @@ const formData = ref([
     type: FormItemType.input,
     value: undefined,
     attrs: {
-      maxLength: "20",
-      showWordLimit: true,
-    },
+      disabled: !isAdd.value
+    }
   },
   {
     label: "路由：",
@@ -106,33 +112,92 @@ const rules = reactive({
 
 const srarchForm = ref();
 
+const rowData: any = reactive({})
+
 function cancel() {
   srarchForm.value?.resetForm();
   dialogFormVisible.value = false;
+  formBtnLoading = false
 }
 
 function confirm() {
   srarchForm.value?.submitForm();
 }
 
-function onSearch(val) {
-  console.log("onSearch", val);
+let tableData: any = []
+
+function dataChanged(val) {
+  tableData = val
+}
+
+function delRow(raw: any) {
+  ElMessageBox.confirm('确定删除此记录？',
+  {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    type: 'warning',
+  })
+  .then(async () => {
+      deleteMenuLoading = true
+      await API.post({
+        url: '/admin/sys/perm/menu/deleteMenu',
+        data: {
+          id: raw.id
+        }
+      }).finally(() => {
+        deleteMenuLoading = false
+        superTableRef.value.doSearch()
+      })
+    })
+}
+
+function updateRow(val) {
+  formBtnLoading = true
+  API.post({
+    url: '/admin/sys/perm/menu/updateMenu',
+    data: {
+      ...val,
+      id: rowData.id
+    }
+  })
+    .then(() => {
+    formBtnLoading = false
+  })
 }
 
 function editRow(raw: any) {
+  Object.assign(rowData, raw)
   formData.value.forEach(item => {
-    item.value = raw[item.key]
+    if (item.key === 'parentId') {
+      const value = raw[item.key]
+      const current = tableData.filter(item => item.id === value)
+      if (current.length) {
+        item.value = current[0]['name']
+      } else {
+        item.value = 0
+      }
+    } else {
+      item.value = raw[item.key]
+    }
   })
   dialogFormVisible.value = true
+}
+
+function addPerm() {
+  isAdd.value = true
+  dialogFormVisible.value = true
+  //todo
 }
 </script>
 
 <template>
   <SuperTable
+    ref="superTableRef"
     query-api="/admin/sys/perm/menu/menuList"
     no-form
     row-key="id"
     :custom-row="listToTree"
+    @on-table-data-updated="dataChanged"
   >
     <el-table-column label="菜单名称" prop="name"></el-table-column>
     <el-table-column label="类型" prop="type">
@@ -184,14 +249,19 @@ function editRow(raw: any) {
           type="danger"
           size="small"
           plain
+          @click="delRow(toRaw(row))"
           >删除</el-button
         >
       </template>
     </el-table-column>
+    <template #tableHeader>
+      <el-button type="primary" @click="addPerm">新增</el-button>
+    </template>
   </SuperTable>
-  <el-dialog
+  <div v-if="dialogFormVisible">
+    <el-dialog
     v-model="dialogFormVisible"
-    title="Shipping address"
+    title="编辑"
     :close-on-click-modal="false"
   >
     <SearchForm
@@ -200,13 +270,14 @@ function editRow(raw: any) {
       :layout="FormItemLayout.column"
       :form-data="formData"
       :rules="rules"
-      @on-search="onSearch"
+      @on-search="updateRow"
     ></SearchForm>
     <template #footer>
       <span class="dialog-footer">
-        <el-button @click="cancel">取消</el-button>
-        <el-button type="primary" @click="confirm"> 确认 </el-button>
+        <el-button :loading="formBtnLoading" @click="cancel">取消</el-button>
+        <el-button :loading="formBtnLoading" type="primary" @click="confirm"> 确认 </el-button>
       </span>
     </template>
   </el-dialog>
+  </div>
 </template>
