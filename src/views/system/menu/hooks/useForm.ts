@@ -1,10 +1,7 @@
 import { FormItemType } from "@/components/SearchForm";
+import { cloneDeep } from 'lodash';
 export default function useForm() {
-  const typeValue = ref(0);
 
-  function typeChanged(val) {
-    typeValue.value = val;
-  }
   const formData: any = ref([
     {
       label: "类型：",
@@ -26,7 +23,7 @@ export default function useForm() {
       ],
       value: undefined,
       attrs: {
-        disabled: true,
+        disabled: false,
         onChange: typeChanged,
       },
     },
@@ -46,7 +43,7 @@ export default function useForm() {
       type: FormItemType.input,
       value: undefined,
       attrs: {
-        disabled: true,
+        disabled: false,
       },
     },
     {
@@ -94,6 +91,20 @@ export default function useForm() {
     },
   ]);
 
+  const typeValue = ref(0);
+
+  function typeChanged(val) {
+    typeValue.value = val;
+  }
+  const rawDataList: any = ref(cloneDeep(toRaw(formData.value)));
+
+  function getMapkey(arr: string[]): Array<any> {
+    return arr.map(item => ({
+      lable: item,
+      value: item
+    }))
+  }
+
   function findItemBykey(key: string) {
     return formData.value.find((item) => item.key === key);
   }
@@ -114,9 +125,11 @@ export default function useForm() {
   });
 
   return {
+    rawDataList,
     typeValue,
     formData,
     rules,
     findItemBykey,
+    getMapkey,
   };
 }

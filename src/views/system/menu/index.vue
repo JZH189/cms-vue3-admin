@@ -8,9 +8,10 @@ import SearchForm, {
 import { useUserStore } from "@/store/modules/user";
 import useForm from "./hooks/useForm";
 
-const { menus } = useUserStore();
+const { menus, perms } = useUserStore();
 
-const { typeValue, formData, rules, findItemBykey } = useForm();
+const { rawDataList, typeValue, formData, rules, findItemBykey, getMapkey } = useForm();
+console.log('formData: ', formData);
 
 const rowData: any = reactive({
   id: undefined,
@@ -24,12 +25,36 @@ const rowData: any = reactive({
   type: 0,
 });
 
+/*
 watchEffect(() => {
-  if (typeValue.value === 0) {
-  } else if (typeValue.value === 1) {
-  } else if (typeValue.value === 2) {
+  if (typeValue.value === 2) {
+    const parentItem = {
+      label: "父级菜单：",
+      key: "parentId",
+      type: FormItemType.select,
+      value: undefined,
+      opts: getMapkey(menus)
+    }
+    formData.value.splice(2, 0, parentItem);
+    const permItem = {
+      label: "权限：",
+      key: "perms",
+      type: FormItemType.select,
+      value: [],
+      attrs: {
+        multiple: true,
+        collapseTags: true,
+      },
+      opts: getMapkey(perms)
+    };
+    findItemBykey("name").label = "权限名称";
+    formData.value.splice(3, 4, permItem);
+  } else {
+    formData.value = rawDataList.value
+    console.log('cachedFormData: ', formData.value);
   }
 });
+*/
 
 let formBtnLoading = false;
 let deleteMenuLoading = false;
@@ -87,11 +112,11 @@ function updateRow(val) {
 }
 
 function editRow(raw: any) {
+  //类型不让编辑
+  // findItemBykey("type").attrs.disabled = true;
+  // //父级菜单不让修改
+  // findItemBykey("parentId").attrs.disabled = true;
   if (raw.type === 2) {
-    const opts = raw.perms.map((item) => ({
-      label: item,
-      value: item,
-    }));
     const formItem = {
       label: "权限：",
       key: "perms",
@@ -101,7 +126,7 @@ function editRow(raw: any) {
         multiple: true,
         collapseTags: true,
       },
-      opts,
+      opts: getMapkey(raw.perms),
     };
     findItemBykey("name").label = "权限名称";
     findItemBykey("name").attrs.disabled = true;
@@ -149,6 +174,7 @@ function addPerm() {
     router: undefined,
     type: 0,
   });
+  console.log('addPerm', rowData.type);
   findItemBykey("type").attrs.disabled = false;
   findItemBykey("type").value = 0;
   findItemBykey("parentId").attrs.disabled = false;
