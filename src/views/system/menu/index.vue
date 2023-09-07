@@ -5,188 +5,154 @@ import SearchForm, {
   FormItemType,
   FormItemLayout,
 } from "@/components/SearchForm";
+import { useUserStore } from "@/store/modules/user";
+import useForm from "./hooks/useForm";
 
-let isAdd = ref(false)
-let formBtnLoading = false
-let deleteMenuLoading = false
-const superTableRef = ref()
-const dialogFormVisible = ref(false);
-const formData = ref([
-  {
-    label: "类型：",
-    key: "type",
-    type: FormItemType.radio,
-    opts: [
-      {
-        label: "目录",
-        value: 0,
-      },
-      {
-        label: "菜单",
-        value: 1,
-      },
-      {
-        label: "权限",
-        value: 2,
-      },
-    ],
-    value: undefined,
-    attrs: {
-      disabled: !isAdd.value
-    }
-  },
-  {
-    label: "菜单名称：",
-    key: "name",
-    type: FormItemType.input,
-    value: undefined,
-    attrs: {
-      maxLength: "20",
-      showWordLimit: true,
-    },
-  },
-  {
-    label: "父级菜单：",
-    key: "parentId",
-    type: FormItemType.input,
-    value: undefined,
-    attrs: {
-      disabled: !isAdd.value
-    }
-  },
-  {
-    label: "路由：",
-    key: "router",
-    type: FormItemType.input,
-    value: undefined,
-    attrs: {
-      maxLength: "20",
-      showWordLimit: true,
-    },
-  },
-  {
-    label: "图标：",
-    key: "icon",
-    type: FormItemType.input,
-    value: undefined,
-    prepend: "i-",
-    attrs: {
-      maxLength: "20",
-      showWordLimit: true,
-    },
-  },
-  {
-    label: "状态：",
-    key: "isShow",
-    type: FormItemType.radio,
-    value: 1,
-    opts: [
-      {
-        label: "显示",
-        value: 1,
-      },
-      {
-        label: "隐藏",
-        value: 0,
-      },
-    ],
-  },
-  {
-    label: "排序：",
-    key: "orderNum",
-    type: FormItemType.input,
-    value: 0,
-  },
-]);
+const { menus } = useUserStore();
 
-const rules = reactive({
-  type: [
-    { required: true, message: "请选择类型", trigger: ["change", "blur"] },
-  ],
-  name: [{ required: true, message: "请输入菜单名称", trigger: "blur" }],
-  parentId: [
-    { required: true, message: "请选择父级菜单", trigger: ["change", "blur"] },
-  ],
-  router: [{ required: true, message: "请输入路由", trigger: "blur" }],
+const { typeValue, formData, rules, findItemBykey } = useForm();
+
+const rowData: any = reactive({
+  id: undefined,
+  icon: undefined,
+  isShow: 1,
+  name: undefined,
+  orderNum: undefined,
+  parentId: undefined,
+  perms: [],
+  router: undefined,
+  type: 0,
 });
 
-const srarchForm = ref();
+watchEffect(() => {
+  if (typeValue.value === 0) {
+  } else if (typeValue.value === 1) {
+  } else if (typeValue.value === 2) {
+  }
+});
 
-const rowData: any = reactive({})
+let formBtnLoading = false;
+let deleteMenuLoading = false;
+const superTableRef = ref();
+const dialogFormVisible = ref(false);
+
+const srarchFormRef = ref();
 
 function cancel() {
-  srarchForm.value?.resetForm();
+  srarchFormRef.value?.resetForm();
   dialogFormVisible.value = false;
-  formBtnLoading = false
+  formBtnLoading = false;
 }
 
 function confirm() {
-  srarchForm.value?.submitForm();
+  srarchFormRef.value?.submitForm();
 }
 
-let tableData: any = []
+let tableData: any = [];
 
 function dataChanged(val) {
-  tableData = val
+  tableData = val;
 }
 
 function delRow(raw: any) {
-  ElMessageBox.confirm('确定删除此记录？',
-  {
-    confirmButtonText: '确定',
-    cancelButtonText: '取消',
-    type: 'warning',
-  })
-  .then(async () => {
-      deleteMenuLoading = true
-      await API.post({
-        url: '/admin/sys/perm/menu/deleteMenu',
-        data: {
-          id: raw.id
-        }
-      }).finally(() => {
-        deleteMenuLoading = false
-        superTableRef.value.doSearch()
-      })
-    })
+  ElMessageBox.confirm("确定删除此记录？", {
+    confirmButtonText: "确定",
+    cancelButtonText: "取消",
+    type: "warning",
+  }).then(async () => {
+    deleteMenuLoading = true;
+    await API.post({
+      url: "/admin/sys/perm/menu/deleteMenu",
+      data: {
+        id: raw.id,
+      },
+    }).finally(() => {
+      deleteMenuLoading = false;
+      superTableRef.value.doSearch();
+    });
+  });
 }
 
 function updateRow(val) {
-  formBtnLoading = true
+  formBtnLoading = true;
   API.post({
-    url: '/admin/sys/perm/menu/updateMenu',
+    url: "/admin/sys/perm/menu/updateMenu",
     data: {
       ...val,
-      id: rowData.id
-    }
-  })
-    .then(() => {
-    formBtnLoading = false
-  })
+      id: rowData.id,
+    },
+  }).then(() => {
+    formBtnLoading = false;
+  });
 }
 
 function editRow(raw: any) {
-  Object.assign(rowData, raw)
-  formData.value.forEach(item => {
-    if (item.key === 'parentId') {
-      const value = raw[item.key]
-      const current = tableData.filter(item => item.id === value)
-      if (current.length) {
-        item.value = current[0]['name']
+  if (raw.type === 2) {
+    const opts = raw.perms.map((item) => ({
+      label: item,
+      value: item,
+    }));
+    const formItem = {
+      label: "权限：",
+      key: "perms",
+      type: FormItemType.select,
+      value: raw.perms,
+      attrs: {
+        multiple: true,
+        collapseTags: true,
+      },
+      opts,
+    };
+    findItemBykey("name").label = "权限名称";
+    findItemBykey("name").attrs.disabled = true;
+    formData.value.splice(3, 4, formItem);
+  } else if (raw.type === 0) {
+    findItemBykey("name").label = "目录名称";
+  } else if (raw.type === 1) {
+    findItemBykey("name").label = "菜单名称";
+  }
+  Object.assign(rowData, raw);
+  formData.value.forEach((item) => {
+    if (item.key === "parentId") {
+      if (raw.type === 2) {
+        //权限
+        const parentName = menus.find((item) => item.id === raw.parentId);
+        if (parentName) {
+          item.value = parentName.name;
+        }
       } else {
-        item.value = 0
+        //目录或者菜单
+        const rawParentId = raw[item.key];
+        const current = tableData.find((item) => item.id === rawParentId);
+        if (current) {
+          item.value = current["name"];
+        } else {
+          item.value = 0;
+        }
       }
     } else {
-      item.value = raw[item.key]
+      item.value = raw[item.key];
     }
-  })
-  dialogFormVisible.value = true
+  });
+  dialogFormVisible.value = true;
 }
 
 function addPerm() {
-  isAdd.value = true
-  dialogFormVisible.value = true
-  //todo
+  Object.assign(rowData, {
+    id: undefined,
+    icon: undefined,
+    isShow: undefined,
+    name: undefined,
+    orderNum: undefined,
+    parentId: undefined,
+    perms: [],
+    router: undefined,
+    type: 0,
+  });
+  findItemBykey("type").attrs.disabled = false;
+  findItemBykey("type").value = 0;
+  findItemBykey("parentId").attrs.disabled = false;
+  dialogFormVisible.value = true;
 }
 </script>
 
@@ -260,24 +226,26 @@ function addPerm() {
   </SuperTable>
   <div v-if="dialogFormVisible">
     <el-dialog
-    v-model="dialogFormVisible"
-    title="编辑"
-    :close-on-click-modal="false"
-  >
-    <SearchForm
-      ref="srarchForm"
-      :show-btn="false"
-      :layout="FormItemLayout.column"
-      :form-data="formData"
-      :rules="rules"
-      @on-search="updateRow"
-    ></SearchForm>
-    <template #footer>
-      <span class="dialog-footer">
-        <el-button :loading="formBtnLoading" @click="cancel">取消</el-button>
-        <el-button :loading="formBtnLoading" type="primary" @click="confirm"> 确认 </el-button>
-      </span>
-    </template>
-  </el-dialog>
+      v-model="dialogFormVisible"
+      title="编辑"
+      :close-on-click-modal="false"
+    >
+      <SearchForm
+        ref="srarchFormRef"
+        :show-btn="false"
+        :layout="FormItemLayout.column"
+        :form-data="formData"
+        :rules="rules"
+        @on-search="updateRow"
+      ></SearchForm>
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button :loading="formBtnLoading" @click="cancel">取消</el-button>
+          <el-button :loading="formBtnLoading" type="primary" @click="confirm">
+            确认
+          </el-button>
+        </span>
+      </template>
+    </el-dialog>
   </div>
 </template>
