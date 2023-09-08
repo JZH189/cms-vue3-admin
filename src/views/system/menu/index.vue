@@ -1,17 +1,15 @@
 <script lang="ts" setup>
 import SuperTable from "@/components/SuperTable";
 import listToTree from "@/utils/listToTree";
-import SearchForm, {
-  FormItemType,
-  FormItemLayout,
-} from "@/components/SearchForm";
+import SearchForm, { FormItemLayout } from "@/components/SearchForm";
 import { useUserStore } from "@/store/modules/user";
 import useForm from "./hooks/useForm";
 
-const { menus, perms } = useUserStore();
+const { menus } = useUserStore();
 
-const { rawDataList, typeValue, formData, rules, findItemBykey, getMapkey } = useForm();
-console.log('formData: ', formData);
+const { typeValue, formData, rules, findItemBykey, resetFormData } = useForm();
+
+let isEdit = ref(true)
 
 const rowData: any = reactive({
   id: undefined,
@@ -25,36 +23,11 @@ const rowData: any = reactive({
   type: 0,
 });
 
-/*
+//侦听类型切换并重置表单信息
 watchEffect(() => {
-  if (typeValue.value === 2) {
-    const parentItem = {
-      label: "父级菜单：",
-      key: "parentId",
-      type: FormItemType.select,
-      value: undefined,
-      opts: getMapkey(menus)
-    }
-    formData.value.splice(2, 0, parentItem);
-    const permItem = {
-      label: "权限：",
-      key: "perms",
-      type: FormItemType.select,
-      value: [],
-      attrs: {
-        multiple: true,
-        collapseTags: true,
-      },
-      opts: getMapkey(perms)
-    };
-    findItemBykey("name").label = "权限名称";
-    formData.value.splice(3, 4, permItem);
-  } else {
-    formData.value = rawDataList.value
-    console.log('cachedFormData: ', formData.value);
-  }
+  if (isEdit.value) return
+  resetFormData(typeValue.value)
 });
-*/
 
 let formBtnLoading = false;
 let deleteMenuLoading = false;
@@ -91,51 +64,55 @@ function delRow(raw: any) {
       data: {
         id: raw.id,
       },
-    }).finally(() => {
+    })
+      .then(() => {
+        ElMessage.success('删除成功！')
+      })
+      .finally(() => {
       deleteMenuLoading = false;
       superTableRef.value.doSearch();
     });
   });
 }
 
-function updateRow(val) {
+function handleOpt(val) {
   formBtnLoading = true;
   API.post({
-    url: "/admin/sys/perm/menu/updateMenu",
+    url: isEdit.value ? "/admin/sys/perm/menu/updateMenu" : "/admin/sys/perm/menu/addMenu",
     data: {
       ...val,
-      id: rowData.id,
+      id: isEdit.value ? rowData.id : undefined,
     },
   }).then(() => {
+    ElMessage.success(`${isEdit.value ? '修改成功！' : '新增成功！'}`)
     formBtnLoading = false;
+    dialogFormVisible.value = false
+    superTableRef.value.doSearch();
   });
 }
 
-function editRow(raw: any) {
+function editName(raw: any) {
   //类型不让编辑
-  // findItemBykey("type").attrs.disabled = true;
-  // //父级菜单不让修改
-  // findItemBykey("parentId").attrs.disabled = true;
+  findItemBykey("type").attrs.disabled = true;
   if (raw.type === 2) {
-    const formItem = {
-      label: "权限：",
-      key: "perms",
-      type: FormItemType.select,
-      value: raw.perms,
-      attrs: {
-        multiple: true,
-        collapseTags: true,
-      },
-      opts: getMapkey(raw.perms),
-    };
     findItemBykey("name").label = "权限名称";
-    findItemBykey("name").attrs.disabled = true;
-    formData.value.splice(3, 4, formItem);
+    findItemBykey("parentId").attrs.disabled = true;
   } else if (raw.type === 0) {
     findItemBykey("name").label = "目录名称";
   } else if (raw.type === 1) {
     findItemBykey("name").label = "菜单名称";
   }
+  if (raw.type !== 2) {
+    //父级菜单不让修改
+    findItemBykey("parentId").attrs.disabled = false;
+  }
+}
+
+function editRow(raw: any) {
+  //重置表单
+  resetFormData(raw.type)
+  isEdit.value = true
+  editName(raw)
   Object.assign(rowData, raw);
   formData.value.forEach((item) => {
     if (item.key === "parentId") {
@@ -163,6 +140,7 @@ function editRow(raw: any) {
 }
 
 function addPerm() {
+  isEdit.value = false
   Object.assign(rowData, {
     id: undefined,
     icon: undefined,
@@ -174,10 +152,7 @@ function addPerm() {
     router: undefined,
     type: 0,
   });
-  console.log('addPerm', rowData.type);
-  findItemBykey("type").attrs.disabled = false;
-  findItemBykey("type").value = 0;
-  findItemBykey("parentId").attrs.disabled = false;
+  resetFormData()
   dialogFormVisible.value = true;
 }
 </script>
@@ -262,7 +237,7 @@ function addPerm() {
         :layout="FormItemLayout.column"
         :form-data="formData"
         :rules="rules"
-        @on-search="updateRow"
+        @on-search="handleOpt"
       ></SearchForm>
       <template #footer>
         <span class="dialog-footer">
