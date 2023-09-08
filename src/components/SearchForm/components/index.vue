@@ -163,17 +163,10 @@ defineExpose({
           <el-tree-select
             v-else-if="type === 'tree-select'"
             v-model="form[key]"
+            :data="opts"
             :clearable="!attrs?.disabled"
             v-bind="attrs"
-            :render-after-expand="false"
-          >
-            <el-option
-              v-for="opt in opts"
-              :key="opt.label"
-              :label="opt.label"
-              :value="opt.value"
-            ></el-option>
-          </el-tree-select>
+          ></el-tree-select>
           <!-- 下拉选择框 -->
           <el-select
             v-else-if="type === 'select'"
