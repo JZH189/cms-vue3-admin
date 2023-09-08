@@ -1,8 +1,36 @@
 import { FormItemType } from "@/components/SearchForm";
 import { cloneDeep } from 'lodash';
-export default function useForm() {
+import { useUserStore } from "@/store/modules/user";
+import listToTree from "@/utils/listToTree"
 
-  const formData: any = ref([
+const { menus, perms } = useUserStore();
+
+function mapkeyValue(list: Array<any>, result: Array<any> = []) {
+  list.forEach((item) => {
+    item["label"] = item.name;
+    item["value"] = item.id;
+    if (item.children) {
+      item.children = mapkeyValue(item.children, []);
+    }
+    result.push(item);
+  });
+  return result;
+}
+
+function getParrentList() {
+  const list = listToTree(toRaw(menus));
+  const result = [
+    {
+      label: "#",
+      value: 0,
+      children: mapkeyValue(list, []),
+    },
+  ];
+  return result;
+}
+export default function useForm() {
+  //类型为目录或者菜单
+  const typeFold = [
     {
       label: "类型：",
       key: "type",
@@ -21,7 +49,7 @@ export default function useForm() {
           value: 2,
         },
       ],
-      value: undefined,
+      value: 0,
       attrs: {
         disabled: false,
         onChange: typeChanged,
@@ -40,9 +68,12 @@ export default function useForm() {
     {
       label: "父级菜单：",
       key: "parentId",
-      type: FormItemType.input,
+      type: FormItemType.treeSelect,
       value: undefined,
+      opts: getParrentList(),
       attrs: {
+        checkStrictly: true,
+        renderAfterExpand: false,
         disabled: false,
       },
     },
@@ -89,14 +120,75 @@ export default function useForm() {
       type: FormItemType.input,
       value: 0,
     },
-  ]);
+  ];
+  //类型为权限
+  const typePerms = [
+    {
+      label: "类型：",
+      key: "type",
+      type: FormItemType.radio,
+      opts: [
+        {
+          label: "目录",
+          value: 0,
+        },
+        {
+          label: "菜单",
+          value: 1,
+        },
+        {
+          label: "权限",
+          value: 2,
+        },
+      ],
+      value: 2,
+      attrs: {
+        disabled: false,
+        onChange: typeChanged,
+      },
+    },
+    {
+      label: "权限名称：",
+      key: "name",
+      type: FormItemType.input,
+      value: undefined,
+      attrs: {
+        maxLength: "20",
+        showWordLimit: true,
+      },
+    },
+    {
+      label: "父级菜单：",
+      key: "parentId",
+      type: FormItemType.treeSelect,
+      value: undefined,
+      opts: getParrentList(),
+      attrs: {
+        checkStrictly: true,
+        renderAfterExpand: false,
+        disabled: false,
+      },
+    },
+    {
+      label: "权限：",
+      key: "perms",
+      type: FormItemType.select,
+      value: [],
+      attrs: {
+        multiple: true,
+        collapseTags: true,
+      },
+      opts: getMapkey(perms),
+    },
+  ];
+
+  const formData: any = ref(cloneDeep(typeFold));
 
   const typeValue = ref(0);
 
   function typeChanged(val) {
     typeValue.value = val;
   }
-  const rawDataList: any = ref(cloneDeep(toRaw(formData.value)));
 
   function getMapkey(arr: string[]): Array<any> {
     return arr.map(item => ({
@@ -107,6 +199,16 @@ export default function useForm() {
 
   function findItemBykey(key: string) {
     return formData.value.find((item) => item.key === key);
+  }
+
+  function resetFormData(type?: number) {
+    if (type === 2) {
+      //权限
+      formData.value = cloneDeep(typePerms);
+    } else {
+      //菜单
+      formData.value = cloneDeep(typeFold);
+    }
   }
 
   const rules = reactive({
@@ -125,11 +227,11 @@ export default function useForm() {
   });
 
   return {
-    rawDataList,
     typeValue,
     formData,
     rules,
     findItemBykey,
+    resetFormData,
     getMapkey,
   };
 }
