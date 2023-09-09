@@ -4,6 +4,7 @@ export enum FormItemType {
   textarea = "textarea", //文本框
   select = "select", //下拉选框
   treeSelect = "tree-select", //树形选择
+  tree = "tree", //树形控件
   timePicker = "time-picker", //时间选择
   timeSelect = "time-select", //时间下拉框
   datePicker = "date-picker", //日期选择

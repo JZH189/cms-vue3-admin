@@ -103,10 +103,28 @@ async function resetForm() {
   emit("onReset", toRaw(form));
 }
 
+const treeRef = ref()
+
+const setCheckedKeys = (keys: number[]) => {
+  if(!treeRef.value) return 
+  treeRef.value[0]!.setCheckedKeys(keys, false)
+}
+const resetChecked = () => {
+  if(!treeRef.value) return 
+  treeRef.value[0]!.setCheckedKeys([], false)
+}
+const getCheckedKeys = () => {
+  if(!treeRef.value) return 
+  return treeRef.value[0]!.getCheckedKeys(false)
+}
+
 defineExpose({
   formData: toRaw(form),
   submitForm,
   resetForm,
+  setCheckedKeys,
+  resetChecked,
+  getCheckedKeys
 });
 </script>
 
@@ -159,6 +177,13 @@ defineExpose({
             type="textarea"
             v-bind="attrs"
           />
+          <!-- 树形控件 -->
+          <el-tree
+            v-else-if="type === 'tree'"
+            ref="treeRef"
+            :data="opts"
+            v-bind="attrs"
+          ></el-tree>
           <!-- 树形选择 -->
           <el-tree-select
             v-else-if="type === 'tree-select'"
