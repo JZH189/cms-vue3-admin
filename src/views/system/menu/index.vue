@@ -3,9 +3,16 @@ import SuperTable from "@/components/SuperTable";
 import listToTree from "@/utils/listToTree";
 import SearchForm, { FormItemLayout } from "@/components/SearchForm";
 import { useUserStore } from "@/store/modules/user";
+import CommonDialog from "@/components/CommonDialog/index.vue"
 import useForm from "./hooks/useForm";
 
 const { menus } = useUserStore();
+
+const dialogData = reactive({
+  visiabel: false,
+  title: '编辑',
+  btnLoading: false,
+})
 
 const { typeValue, formData, rules, findItemBykey, resetFormData } = useForm();
 
@@ -29,17 +36,15 @@ watchEffect(() => {
   resetFormData(typeValue.value)
 });
 
-let formBtnLoading = false;
 let deleteMenuLoading = false;
 const superTableRef = ref();
-const dialogFormVisible = ref(false);
 
 const srarchFormRef = ref();
 
 function cancel() {
   srarchFormRef.value?.resetForm();
-  dialogFormVisible.value = false;
-  formBtnLoading = false;
+  dialogData.visiabel = false
+  dialogData.btnLoading = false
 }
 
 function confirm() {
@@ -76,19 +81,22 @@ function delRow(raw: any) {
 }
 
 function handleOpt(val) {
-  formBtnLoading = true;
+  dialogData.btnLoading = true
   API.post({
     url: isEdit.value ? "/admin/sys/perm/menu/updateMenu" : "/admin/sys/perm/menu/addMenu",
     data: {
       ...val,
       id: isEdit.value ? rowData.id : undefined,
     },
-  }).then(() => {
-    ElMessage.success(`${isEdit.value ? '修改成功！' : '新增成功！'}`)
-    formBtnLoading = false;
-    dialogFormVisible.value = false
-    superTableRef.value.doSearch();
-  });
+  })
+    .then(() => {
+      ElMessage.success(`${isEdit.value ? '修改成功！' : '新增成功！'}`)
+      dialogData.visiabel = false
+      superTableRef.value.doSearch();
+    })
+    .finally(() => {
+      dialogData.btnLoading = false
+    })
 }
 
 function editName(raw: any) {
@@ -109,6 +117,7 @@ function editName(raw: any) {
 }
 
 function editRow(raw: any) {
+  dialogData.title = '编辑'
   //重置表单
   resetFormData(raw.type)
   isEdit.value = true
@@ -136,10 +145,11 @@ function editRow(raw: any) {
       item.value = raw[item.key];
     }
   });
-  dialogFormVisible.value = true;
+  dialogData.visiabel = true;
 }
 
 function addPerm() {
+  dialogData.title = '新增'
   isEdit.value = false
   Object.assign(rowData, {
     id: undefined,
@@ -153,7 +163,7 @@ function addPerm() {
     type: 0,
   });
   resetFormData()
-  dialogFormVisible.value = true;
+  dialogData.visiabel = true
 }
 </script>
 
@@ -225,28 +235,20 @@ function addPerm() {
       <el-button type="primary" @click="addPerm">新增</el-button>
     </template>
   </SuperTable>
-  <div v-if="dialogFormVisible">
-    <el-dialog
-      v-model="dialogFormVisible"
-      title="编辑"
-      :close-on-click-modal="false"
+  <CommonDialog 
+    v-model:visiabel="dialogData.visiabel" 
+    :btn-loading="dialogData.btnLoading"
+    :title="dialogData.title"
+    @cancel="cancel"
+    @confirm="confirm"
     >
-      <SearchForm
-        ref="srarchFormRef"
-        :show-btn="false"
-        :layout="FormItemLayout.column"
-        :form-data="formData"
-        :rules="rules"
-        @on-search="handleOpt"
-      ></SearchForm>
-      <template #footer>
-        <span class="dialog-footer">
-          <el-button :loading="formBtnLoading" @click="cancel">取消</el-button>
-          <el-button :loading="formBtnLoading" type="primary" @click="confirm">
-            确认
-          </el-button>
-        </span>
-      </template>
-    </el-dialog>
-  </div>
+    <SearchForm
+      ref="srarchFormRef"
+      :show-btn="false"
+      :layout="FormItemLayout.column"
+      :form-data="formData"
+      :rules="rules"
+      @on-search="handleOpt"
+    ></SearchForm>
+  </CommonDialog>
 </template>
