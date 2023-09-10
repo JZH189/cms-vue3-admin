@@ -122,7 +122,7 @@ function addRole() {
     query-api="/admin/sys/user/userPage"
   >
     <el-table-column label="账号" prop="account"></el-table-column>
-    <el-table-column label="用户昵称" prop="username"></el-table-column>
+    <el-table-column label="用户昵称" prop="userName"></el-table-column>
     <el-table-column label="手机号" prop="mobile"></el-table-column>
     <el-table-column label="角色集" prop="roleIds"></el-table-column>
     <el-table-column label="状态" prop="status">
