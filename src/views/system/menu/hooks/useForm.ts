@@ -3,7 +3,7 @@ import { cloneDeep } from 'lodash';
 import { useUserStore } from "@/store/modules/user";
 import listToTree from "@/utils/listToTree"
 
-const { menus, perms } = useUserStore();
+const userStore = useUserStore()
 
 function mapkeyValue(list: Array<any>, result: Array<any> = []) {
   list.forEach((item) => {
@@ -14,18 +14,6 @@ function mapkeyValue(list: Array<any>, result: Array<any> = []) {
     }
     result.push(item);
   });
-  return result;
-}
-
-function getParrentList() {
-  const list = listToTree(toRaw(menus));
-  const result = [
-    {
-      label: "#",
-      value: 0,
-      children: mapkeyValue(list, []),
-    },
-  ];
   return result;
 }
 export default function useForm() {
@@ -70,7 +58,7 @@ export default function useForm() {
       key: "parentId",
       type: FormItemType.treeSelect,
       value: undefined,
-      opts: getParrentList(),
+      opts: [],
       attrs: {
         checkStrictly: true,
         renderAfterExpand: false,
@@ -162,11 +150,10 @@ export default function useForm() {
       key: "parentId",
       type: FormItemType.treeSelect,
       value: undefined,
-      opts: getParrentList(),
+      opts: [],
       attrs: {
         checkStrictly: true,
         renderAfterExpand: false,
-        disabled: false,
       },
     },
     {
@@ -178,12 +165,11 @@ export default function useForm() {
         multiple: true,
         collapseTags: true,
       },
-      opts: getMapkey(perms),
+      opts: getMapkey(userStore.perms),
     },
   ];
 
   const formData: any = ref(cloneDeep(typeFold));
-
   const typeValue = ref(0);
 
   function typeChanged(val) {
@@ -201,7 +187,19 @@ export default function useForm() {
     return formData.value.find((item) => item.key === key);
   }
 
-  function resetFormData(type?: number) {
+  function refreshParrentList() {
+    const list = listToTree(toRaw(userStore.menus));
+    //重置父级菜单选项
+    findItemBykey("parentId").opts = [
+      {
+        label: "#",
+        value: 0,
+        children: mapkeyValue(list, []),
+      },
+    ];
+  }
+
+  async function resetFormData(type?: number) {
     if (type === 2) {
       //权限
       formData.value = cloneDeep(typePerms);
@@ -209,6 +207,10 @@ export default function useForm() {
       //菜单
       formData.value = cloneDeep(typeFold);
     }
+    //每次新增菜单或者权限之前需要同步权限列表信息
+    await userStore.getPermmenu();
+    //刷新父级菜单
+    refreshParrentList();
   }
 
   const rules = reactive({

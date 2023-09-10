@@ -104,19 +104,14 @@ function editName(raw: any) {
   findItemBykey("type").attrs.disabled = true;
   if (raw.type === 2) {
     findItemBykey("name").label = "权限名称";
-    findItemBykey("parentId").attrs.disabled = true;
   } else if (raw.type === 0) {
     findItemBykey("name").label = "目录名称";
   } else if (raw.type === 1) {
     findItemBykey("name").label = "菜单名称";
   }
-  if (raw.type !== 2) {
-    //父级菜单不让修改
-    findItemBykey("parentId").attrs.disabled = false;
-  }
 }
 
-function editRow(raw: any) {
+async function editRow(raw: any) {
   dialogData.title = '编辑'
   //重置表单
   resetFormData(raw.type)
@@ -127,9 +122,9 @@ function editRow(raw: any) {
     if (item.key === "parentId") {
       if (raw.type === 2) {
         //权限
-        const parentName = menus.find((item) => item.id === raw.parentId);
-        if (parentName) {
-          item.value = parentName.name;
+        const parent = menus.find((item) => item.id === raw.parentId);
+        if (parent) {
+          item.value = parent.id;
         }
       } else {
         //目录或者菜单
@@ -142,13 +137,17 @@ function editRow(raw: any) {
         }
       }
     } else {
-      item.value = raw[item.key];
+      if (item.key === "perms") {
+        item.value = JSON.parse(raw[item.key]);
+      } else {
+        item.value = raw[item.key];
+      }
     }
   });
   dialogData.visiabel = true;
 }
 
-function addPerm() {
+async function addPerm() {
   dialogData.title = '新增'
   isEdit.value = false
   Object.assign(rowData, {
