@@ -21,7 +21,7 @@ function mapkeyValue(list: Array<any>, result: Array<any> = []) {
   return result;
 }
 
-export async function getParrentList() {
+async function getParrentList() {
   const menuList = await getMenuList();
   const list = listToTree(menuList);
   return mapkeyValue(list, []);
@@ -110,8 +110,9 @@ export default function useForm() {
     return formData.value.find((item) => item.key === key);
   }
 
-  function resetFormData() {
+  async function resetFormData() {
     formData.value = cloneDeep(formColunm);
+    findItemBykey("permMenuIds").opts = await getParrentList();
   }
 
   function updateRowData(row: any) {

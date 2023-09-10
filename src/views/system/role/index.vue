@@ -1,23 +1,26 @@
 <script lang="ts" setup>
 import SuperTable from "@/components/SuperTable";
 import SearchForm, { FormItemLayout } from "@/components/SearchForm";
-import useForm, { getMenuList, getParrentList } from "./hooks/useForm"
+import useForm, { getMenuList } from "./hooks/useForm"
 
-const { rowData, formData, findItemBykey, rules, updateRowData } = useForm()
+const { rowData, formData, rules, updateRowData, resetFormData } = useForm()
 
 let isEdit = ref(true)
 
-let formBtnLoading = false;
-let deleteMenuLoading = false;
-const superTableRef = ref();
-const dialogFormVisible = ref(false);
+const dialogData = reactive({
+  visiabel: false,
+  title: '编辑',
+  btnLoading: false,
+})
 
+let deleteRoleLoading = false;
+const superTableRef = ref();
 const srarchFormRef = ref();
 
 function cancel() {
   srarchFormRef.value?.resetForm();
-  dialogFormVisible.value = false;
-  formBtnLoading = false;
+  dialogData.btnLoading = false
+  dialogData.visiabel = false
 }
 
 function confirm() {
@@ -30,9 +33,9 @@ function delRow(raw: any) {
     cancelButtonText: "取消",
     type: "warning",
   }).then(async () => {
-    deleteMenuLoading = true;
+    deleteRoleLoading = true;
     await API.post({
-      url: "/admin/sys/perm/menu/deleteMenu",
+      url: "/admin/sys/role/deleteRole",
       data: {
         id: raw.id,
       },
@@ -41,8 +44,8 @@ function delRow(raw: any) {
         ElMessage.success('删除成功！')
       })
       .finally(() => {
-      deleteMenuLoading = false;
-      superTableRef.value.doSearch();
+        deleteRoleLoading = false;
+        superTableRef.value.doSearch();
     });
   });
 }
@@ -61,7 +64,7 @@ function handleOpt(val) {
     ...val,
     permMenuIds: getCheckedKeysVal()
   }
-  formBtnLoading = true;
+  dialogData.btnLoading = true
   API.post({
     url: isEdit.value ? "/admin/sys/role/updateRole" : "/admin/sys/role/addRole",
     data: {
@@ -70,13 +73,16 @@ function handleOpt(val) {
     },
   }).then(() => {
     ElMessage.success(`${isEdit.value ? '修改成功！' : '新增成功！'}`)
-    formBtnLoading = false;
-    dialogFormVisible.value = false
     superTableRef.value.doSearch();
-  });
+  }).finally(() => {
+    dialogData.visiabel = false
+    dialogData.btnLoading = false
+  })
 }
 
 async function editRow(raw: any) {
+  dialogData.title = '编辑'
+  resetFormData()
   isEdit.value = true
   if (raw.roleCode === "root" && raw.permMenuIds.length <= 0) {
     const allMenus = await getMenuList()
@@ -84,7 +90,7 @@ async function editRow(raw: any) {
   }
   Object.assign(rowData, raw)
   updateRowData(raw)
-  dialogFormVisible.value = true;
+  dialogData.visiabel = true
   //一定要在表单渲染之后才能调用
   nextTick(() => {
     setCheckedKeysVal(raw.permMenuIds)
@@ -92,6 +98,8 @@ async function editRow(raw: any) {
 }
 
 function addRole() {
+  dialogData.title = '新增'
+  resetFormData()
   isEdit.value = false
   Object.assign(rowData, {
     id: undefined,
@@ -103,13 +111,8 @@ function addRole() {
     router: undefined,
     type: 0,
   });
-  dialogFormVisible.value = true;
+  dialogData.visiabel = true
 }
-
-onMounted(async () => {
-  const res = await getParrentList()
-  findItemBykey('permMenuIds').opts = res
-})
 </script>
 
 <template>
@@ -156,28 +159,20 @@ onMounted(async () => {
       <el-button type="primary" @click="addRole">新增</el-button>
     </template>
   </SuperTable>
-  <div v-if="dialogFormVisible">
-    <el-dialog
-      v-model="dialogFormVisible"
-      title="编辑"
-      :close-on-click-modal="false"
+  <CommonDialog 
+    v-model:visiabel="dialogData.visiabel" 
+    :btn-loading="dialogData.btnLoading"
+    :title="dialogData.title"
+    @cancel="cancel"
+    @confirm="confirm"
     >
-      <SearchForm
-        ref="srarchFormRef"
-        :show-btn="false"
-        :layout="FormItemLayout.column"
-        :form-data="formData"
-        :rules="rules"
-        @on-search="handleOpt"
-      ></SearchForm>
-      <template #footer>
-        <span class="dialog-footer">
-          <el-button :loading="formBtnLoading" @click="cancel">取消</el-button>
-          <el-button :loading="formBtnLoading" type="primary" @click="confirm">
-            确认
-          </el-button>
-        </span>
-      </template>
-    </el-dialog>
-  </div>
+    <SearchForm
+      ref="srarchFormRef"
+      :show-btn="false"
+      :layout="FormItemLayout.column"
+      :form-data="formData"
+      :rules="rules"
+      @on-search="handleOpt"
+    ></SearchForm>
+  </CommonDialog>
 </template>
