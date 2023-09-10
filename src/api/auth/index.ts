@@ -11,7 +11,7 @@ import { CaptchaResult, LoginData, LoginResult } from "./types";
 export function loginApi(data: LoginData): AxiosPromise<LoginResult> {
   const formData = new FormData();
   formData.append("username", data.username);
-  formData.append("password", data.password);
+  formData.append("passWord", data.passWord);
   formData.append("captchaId", data.captchaId || "");
   formData.append("verifyCode", data.verifyCode || "");
   return request({

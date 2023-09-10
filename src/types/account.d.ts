@@ -17,7 +17,7 @@ export interface LoginData {
   /**
    * 密码
    */
-  password: string;
+  passWord: string;
 
   /**
    * 验证码缓存key

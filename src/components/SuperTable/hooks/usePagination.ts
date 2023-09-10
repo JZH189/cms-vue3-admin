@@ -41,6 +41,7 @@ export function usePagination(props: any): ItableReturn {
     loading.value = true;
     let result: any
     if (!noForm) {
+      //开启分页和查询表单
       result = await API.post<Ipages>({
         url: queryApi,
         data: {
@@ -52,16 +53,17 @@ export function usePagination(props: any): ItableReturn {
         },
       });
       tableList.value =
-        typeof customRow === "function" ? customRow(result.data) : result.data;
+        typeof customRow === "function" ? customRow(result.list) : result.list;
       pagination.currentPage = result.pagination.currentPage;
       pagination.pageSize = result.pagination.pageSize;
       pagination.total = result.pagination.total;
     } else {
+      //关闭分页和查询表单
       result = await API.get({
         url: queryApi,
       });
       tableList.value =
-        typeof customRow === "function" ? customRow(result.list) : result.list;
+      typeof customRow === "function" ? customRow(result.list) : result.list;
     }
     loading.value = false;
   }

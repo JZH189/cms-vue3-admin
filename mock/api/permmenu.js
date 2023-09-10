@@ -95,7 +95,7 @@ export default [
             "/sys/user/rdpj/info",
             "/sys/user/deleteUser",
             "/sys/user/updateUser",
-            "/sys/user/password/updatePassword",
+            "/sys/user/passWord/updatePassword",
             "/log/login/loginPage",
           ],
         },

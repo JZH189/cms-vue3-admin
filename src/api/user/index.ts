@@ -84,13 +84,13 @@ export function updateUserStatus(id: number, status: number) {
  * 修改用户密码
  *
  * @param id
- * @param password
+ * @param passWord
  */
-export function updateUserPassword(id: number, password: string) {
+export function updateUserPassword(id: number, passWord: string) {
   return request({
-    url: '/api/v1/users/' + id + '/password',
+    url: '/api/v1/users/' + id + '/passWord',
     method: 'patch',
-    params: { password: password }
+    params: { passWord: passWord }
   });
 }
 

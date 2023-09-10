@@ -32,17 +32,17 @@
         content="Caps lock is On"
         placement="right"
       >
-        <el-form-item prop="password">
+        <el-form-item prop="passWord">
           <span class="p-2 text-white">
-            <svg-icon icon-class="password" />
+            <svg-icon icon-class="passWord" />
           </span>
           <el-input
-            v-model="loginData.password"
+            v-model="loginData.passWord"
             class="flex-1"
             placeholder="密码"
-            :type="passwordVisible === false ? 'password' : 'input'"
+            :type="passwordVisible === false ? 'passWord' : 'input'"
             size="large"
-            name="password"
+            name="passWord"
             @keyup="checkCapslock"
             @keyup.enter="handleLogin"
           />
@@ -127,14 +127,14 @@ const loginFormRef = ref(ElForm);
 
 const loginData = reactive<LoginData>({
   account: "admin",
-  password: "123456",
+  passWord: "123456",
   captchaId: undefined,
   verifyCode: undefined,
 });
 
 const loginRules = {
   account: [{ required: true, trigger: "blur" }],
-  password: [{ required: true, trigger: "blur", validator: passwordValidator }],
+  passWord: [{ required: true, trigger: "blur", validator: passwordValidator }],
   verifyCode: [{ required: true, trigger: "blur" }],
 };
 
@@ -143,7 +143,7 @@ const loginRules = {
  */
 function passwordValidator(rule: any, value: any, callback: any) {
   if (value.length < 6) {
-    callback(new Error("The password can not be less than 6 digits"));
+    callback(new Error("The passWord can not be less than 6 digits"));
   } else {
     callback();
   }
