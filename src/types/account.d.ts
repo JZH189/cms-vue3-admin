@@ -42,7 +42,7 @@ export interface LoginResult {
  */
 export interface LoginInfo {
   avatar: string;
-  username: string;
+  userName: string;
 }
 
 /**
