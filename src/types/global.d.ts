@@ -1,10 +1,18 @@
 declare global {
-  /**
-   * 分页查询参数
-   */
-  interface PageQuery {
-    pageNum: number;
+  interface Pagination {
+    currentPage: number;
     pageSize: number;
+    total: number;
+  }
+
+  /**
+   * 列表响应对象
+   */
+  interface ListResult<T> {
+    /**
+     * 数据列表
+     */
+    list: T[];
   }
 
   /**
@@ -14,11 +22,11 @@ declare global {
     /**
      * 数据列表
      */
-    list: T;
+    list: T[];
     /**
      * 数据总数
      */
-    total: number;
+    pagination: Pagination;
   }
 
   /**
