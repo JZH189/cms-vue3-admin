@@ -1,6 +1,5 @@
 import { FormItemType } from "@/components/SearchForm";
 import { cloneDeep } from 'lodash';
-import listToTree from "@/utils/listToTree"
 
 export async function getMenuList() {
   const result = await API.get({
@@ -21,10 +20,11 @@ function mapkeyValue(list: Array<any>, result: Array<any> = []) {
   return result;
 }
 
-async function getParrentList() {
-  const menuList = await getMenuList();
-  const list = listToTree(menuList);
-  return mapkeyValue(list, []);
+async function getSysRoleList() {
+  const result = await API.get<ListResult>({
+    url: "/admin/sys/role/roleList",
+  });
+  console.log(res);
 }
 
 export default function useForm() {
@@ -44,14 +44,13 @@ export default function useForm() {
 
   const rowData: any = reactive({
     id: undefined,
-    orderNum: 0,
-    permMenuIds: [],
-    roleName: undefined,
-    roleCode: undefined,
+    account: undefined,
+    userName: undefined,
+    mobile: undefined,
+    roleIds: [],
     status: 1,
   });
 
-  //类型为权限
   const formColunm = [
     {
       label: "账号(用于登录)：",
@@ -135,17 +134,16 @@ export default function useForm() {
     return formData.value.find((item) => item.key === key);
   }
 
-  async function resetFormData() {
-    formData.value = cloneDeep(formColunm);
-    findItemBykey("permMenuIds").opts = await getParrentList();
+  async function assignFormVal(raw: any) {
+    await getSysRoleList()
+    //编辑formData.key赋值
+    formData.value.map(item => item.key).forEach(key => {
+      findItemBykey(key).value = raw[key];
+    })
   }
 
-  function updateRowData(row: any) {
-    findItemBykey("roleName").value = row?.roleName
-    findItemBykey("roleCode").value = row?.roleCode;
-    findItemBykey("permMenuIds").value = row?.permMenuIds;
-    findItemBykey("orderNum").value = row?.orderNum || 0;
-    findItemBykey("status").value = row?.status || 0;
+  async function resetFormData() {
+    formData.value = cloneDeep(formColunm);
   }
 
   const rules = reactive({
@@ -160,7 +158,7 @@ export default function useForm() {
     rules,
     findItemBykey,
     resetFormData,
+    assignFormVal,
     getMapkey,
-    updateRowData,
   };
 }

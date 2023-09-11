@@ -3,7 +3,7 @@ import SuperTable from "@/components/SuperTable";
 import SearchForm, { FormItemLayout } from "@/components/SearchForm";
 import useForm, { getMenuList } from "./hooks/useForm"
 
-const { rowData, searchForm, formData, rules, updateRowData, resetFormData } = useForm()
+const { rowData, searchForm, formData, assignFormVal, rules, resetFormData } = useForm()
 
 let isEdit = ref(true)
 
@@ -50,19 +50,9 @@ function delRow(raw: any) {
   });
 }
 
-//获取选中的权限id
-function getCheckedKeysVal() {
-  return srarchFormRef.value.getCheckedKeys()
-}
-
-function setCheckedKeysVal(ids: number[]) {
-  srarchFormRef.value.setCheckedKeys(ids)
-}
-
 function handleOpt(val) {
   const param = {
     ...val,
-    permMenuIds: getCheckedKeysVal()
   }
   dialogData.btnLoading = true
   API.post({
@@ -82,19 +72,9 @@ function handleOpt(val) {
 
 async function editRow(raw: any) {
   dialogData.title = '编辑'
-  resetFormData()
   isEdit.value = true
-  if (raw.roleCode === "root" && raw.permMenuIds.length <= 0) {
-    const allMenus = await getMenuList()
-    raw.permMenuIds = allMenus.map(item => item.id)
-  }
-  Object.assign(rowData, raw)
-  updateRowData(raw)
+  assignFormVal(raw)
   dialogData.visiabel = true
-  //一定要在表单渲染之后才能调用
-  nextTick(() => {
-    setCheckedKeysVal(raw.permMenuIds)
-  })
 }
 
 function addRole() {
