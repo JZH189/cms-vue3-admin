@@ -1,4 +1,4 @@
-declare global {
+export declare global {
   interface Pagination {
     currentPage: number;
     pageSize: number;
