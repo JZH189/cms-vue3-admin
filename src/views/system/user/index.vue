@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import SuperTable from "@/components/SuperTable";
 import SearchForm, { FormItemLayout } from "@/components/SearchForm";
-import useForm, { getMenuList } from "./hooks/useForm"
+import useForm from "./hooks/useForm"
 
 const { rowData, searchForm, formData, assignFormVal, rules, resetFormData } = useForm()
 
@@ -51,14 +51,11 @@ function delRow(raw: any) {
 }
 
 function handleOpt(val) {
-  const param = {
-    ...val,
-  }
   dialogData.btnLoading = true
   API.post({
-    url: isEdit.value ? "/admin/sys/user/updateUser" : "/admin/sys/user/deleteUser",
+    url: isEdit.value ? "/admin/sys/user/updateUser" : "/admin/sys/user/addUser",
     data: {
-      ...param,
+      ...val,
       id: isEdit.value ? rowData.id : undefined,
     },
   }).then(() => {
@@ -83,13 +80,11 @@ function addRole() {
   isEdit.value = false
   Object.assign(rowData, {
     id: undefined,
-    icon: undefined,
-    isShow: undefined,
-    name: undefined,
-    orderNum: undefined,
-    perms: [],
-    router: undefined,
-    type: 0,
+    account: undefined,
+    userName: undefined,
+    mobile: undefined,
+    roleIds: [],
+    status: 1,
   });
   dialogData.visiabel = true
 }
@@ -150,6 +145,7 @@ function addRole() {
     >
     <SearchForm
       ref="srarchFormRef"
+      :label-width="220"
       :show-btn="false"
       :layout="FormItemLayout.column"
       :form-data="formData"

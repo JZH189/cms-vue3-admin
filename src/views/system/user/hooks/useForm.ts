@@ -1,30 +1,20 @@
 import { FormItemType } from "@/components/SearchForm";
 import { cloneDeep } from 'lodash';
+import { validatePhone } from "@/utils/validate"
 
-export async function getMenuList() {
-  const result = await API.get({
-    url: "/admin/sys/perm/menu/menuList",
-  });
-  return result.list;
-}
-
-function mapkeyValue(list: Array<any>, result: Array<any> = []) {
-  list.forEach((item) => {
-    item["label"] = item.name;
-    item["value"] = item.id;
-    if (item.children) {
-      item.children = mapkeyValue(item.children, []);
-    }
-    result.push(item);
-  });
-  return result;
-}
-
-async function getSysRoleList() {
-  const result = await API.get<ListResult>({
-    url: "/admin/sys/role/roleList",
-  });
-  console.log(res);
+async function getSysRoleList(): Promise<any[]> {
+  try {
+    const result = await API.get<ListResult<any>>({
+      url: "/admin/sys/role/roleList",
+    });
+    return result.list.map(item => ({
+      label: item.roleName,
+      value: item.id
+    }))
+  } catch (error) {
+    console.log('error: ', error);
+    return []
+  }
 }
 
 export default function useForm() {
@@ -36,7 +26,7 @@ export default function useForm() {
       type: FormItemType.input,
       value: undefined,
       attrs: {
-        maxLength: "50",
+        maxlength: "50",
         showWordLimit: true,
       },
     },
@@ -58,7 +48,7 @@ export default function useForm() {
       type: FormItemType.input,
       value: undefined,
       attrs: {
-        maxLength: "50",
+        maxlength: "50",
         showWordLimit: true,
       },
     },
@@ -68,7 +58,7 @@ export default function useForm() {
       type: FormItemType.input,
       value: undefined,
       attrs: {
-        maxLength: "50",
+        maxlength: "50",
         showWordLimit: true,
       },
     },
@@ -94,7 +84,7 @@ export default function useForm() {
       type: FormItemType.input,
       value: undefined,
       attrs: {
-        maxLength: "11",
+        maxlength: "11",
         showWordLimit: true,
       },
     },
@@ -115,7 +105,7 @@ export default function useForm() {
       type: FormItemType.textarea,
       value: undefined,
       attrs: {
-        maxLength: "200",
+        maxlength: "200",
         showWordLimit: true,
       },
     },
@@ -134,21 +124,41 @@ export default function useForm() {
     return formData.value.find((item) => item.key === key);
   }
 
+  async function resetRolesList() {
+    const roleList = await getSysRoleList();
+    //设置权限列表数据
+    findItemBykey("roleIds").opts = roleList;
+  }
+
   async function assignFormVal(raw: any) {
-    await getSysRoleList()
     //编辑formData.key赋值
     formData.value.map(item => item.key).forEach(key => {
       findItemBykey(key).value = raw[key];
     })
+    Object.keys(rowData).forEach(key => {
+      rowData[key] = raw[key]
+    });
+    resetRolesList()
   }
 
   async function resetFormData() {
     formData.value = cloneDeep(formColunm);
+    resetRolesList();
   }
 
   const rules = reactive({
-    roleName: [{ required: true, message: "请角色名称", trigger: "blur" }],
-    roleCode: [{ required: true, message: "请角色code", trigger: "blur" }],
+    account: [{ required: true, message: "请输入登录名称", trigger: "blur" }],
+    userName: [{ required: true, message: "请输入用户昵称", trigger: "blur" }],
+    mobile: [
+      {
+        required: true,
+        trigger: "blur",
+        validator: validatePhone,
+      },
+    ],
+    roleIds: [
+      { required: true, message: "请选择角色", trigger: ["blur", "change"] },
+    ],
   });
 
   return {
