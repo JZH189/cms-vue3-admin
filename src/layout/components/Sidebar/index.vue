@@ -27,6 +27,7 @@ const safeIcons = [
   "i-carbon:application-web",
   "i-carbon:data-volume",
   "i-carbon:data-1",
+  "i-carbon:ibm-cloud-hyper-protect-crypto-services"
 ];
 </script>
 
