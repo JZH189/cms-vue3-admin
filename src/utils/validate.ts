@@ -20,3 +20,15 @@ export function validatePhone(rule: any, value: any, callback: any): void {
     callback()
   }
 }
+
+export function validatePassword(rule: any, value: any, callback: any): void {
+  if (!value) {
+    callback(new Error("密码不能为空！"));
+  } else if (value.length < 6 || value.length > 32) {
+    callback(new Error("密码长度6-32位！"));
+  } else if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/.test(value)) {
+    callback(new Error("密码必须包含数字以及大小写字母！"));
+  } else {
+    callback();
+  }
+}
