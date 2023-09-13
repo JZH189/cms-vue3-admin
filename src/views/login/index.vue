@@ -34,7 +34,7 @@
       >
         <el-form-item prop="passWord">
           <span class="p-2 text-white">
-            <svg-icon icon-class="passWord" />
+            <svg-icon icon-class="password" />
           </span>
           <el-input
             v-model="loginData.passWord"
@@ -85,7 +85,7 @@
       <!-- 账号密码提示 -->
       <div class="mt-4 text-white text-sm">
         <span> 用户名: admin</span>
-        <span class="ml-4"> 密码: 123456</span>
+        <span class="ml-4"> 密码: Aa123456</span>
       </div>
     </el-form>
   </div>
