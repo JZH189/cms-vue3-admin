@@ -42,7 +42,7 @@ export const useUserStore = defineStore(
       return new Promise<LoginInfo>(async (resolve, reject) => {
         try {
           const loginInfo = await API.get<LoginInfo>({
-            url: "/admin/sys/user/info",
+            url: "/admin/sys/user/userInfo",
           });
           nickname.value = loginInfo.userName;
           avatar.value = loginInfo.avatar;
