@@ -38,34 +38,43 @@ export function usePagination(props: any): ItableReturn {
   const tableList: any = ref([]);
   // 调用查询接口
   async function queryPages(params?: any) {
-    loading.value = true;
-    let result: any
-    if (!noForm) {
-      //开启分页和查询表单
-      result = await API.post<Ipages>({
-        url: queryApi,
-        data: {
-          currentPage: pagination.currentPage || 1,
-          pageSize: pagination.pageSize || 100,
-          param: {
-            ...params,
+    try {
+      loading.value = true;
+      let result: any;
+      if (!noForm) {
+        //开启分页和查询表单
+        result = await API.post<Ipages>({
+          url: queryApi,
+          data: {
+            currentPage: pagination.currentPage || 1,
+            pageSize: pagination.pageSize || 100,
+            param: {
+              ...params,
+            },
           },
-        },
-      });
-      tableList.value =
-        typeof customRow === "function" ? customRow(result.list) : result.list;
-      pagination.currentPage = result.pagination.currentPage;
-      pagination.pageSize = result.pagination.pageSize;
-      pagination.total = result.pagination.total;
-    } else {
-      //关闭分页和查询表单
-      result = await API.get({
-        url: queryApi,
-      });
-      tableList.value =
-      typeof customRow === "function" ? customRow(result.list) : result.list;
+        });
+        tableList.value =
+          typeof customRow === "function"
+            ? customRow(result.list)
+            : result.list;
+        pagination.currentPage = result.pagination.currentPage;
+        pagination.pageSize = result.pagination.pageSize;
+        pagination.total = result.pagination.total;
+      } else {
+        //关闭分页和查询表单
+        result = await API.get({
+          url: queryApi,
+        });
+        tableList.value =
+          typeof customRow === "function"
+            ? customRow(result.list)
+            : result.list;
+      }
+      loading.value = false;
+    } catch (error) {
+      loading.value = false;
+      console.log('error: ', error);
     }
-    loading.value = false;
   }
   //查询
   async function doSearch(params: any) {
