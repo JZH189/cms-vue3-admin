@@ -112,7 +112,7 @@ function editName(raw: any) {
 }
 
 async function editRow(raw: any) {
-  dialogData.title = '编辑'
+    dialogData.title = '编辑'
   //重置表单
   resetFormData(raw.type)
   isEdit.value = true
@@ -128,13 +128,7 @@ async function editRow(raw: any) {
         }
       } else {
         //目录或者菜单
-        const rawParentId = raw[item.key];
-        const current = tableData.find((item) => item.id === rawParentId);
-        if (current) {
-          item.value = current["name"];
-        } else {
-          item.value = 0;
-        }
+        item.value = raw[item.key];
       }
     } else {
       if (item.key === "perms") {
