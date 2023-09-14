@@ -2,7 +2,7 @@ import { FormItemType } from "@/components/SearchForm";
 import { cloneDeep } from 'lodash';
 import { validatePhone } from "@/utils/validate"
 
-async function getSysRoleList(): Promise<any[]> {
+export async function getSysRoleList(): Promise<any[]> {
   try {
     const result = await API.get<ListResult<any>>({
       url: "/admin/sys/role/roleList",

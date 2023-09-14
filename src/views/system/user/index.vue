@@ -1,9 +1,11 @@
 <script lang="ts" setup>
 import SuperTable from "@/components/SuperTable";
 import SearchForm, { FormItemLayout } from "@/components/SearchForm";
-import useForm from "./hooks/useForm"
+import useForm, { getSysRoleList } from "./hooks/useForm"
 
 const { rowData, searchForm, formData, assignFormVal, rules, resetFormData } = useForm()
+
+const roleList: any = ref([])
 
 let isEdit = ref(true)
 
@@ -88,6 +90,10 @@ function addRole() {
   });
   dialogData.visiabel = true
 }
+
+onMounted(async () => {
+  roleList.value = await getSysRoleList()
+})
 </script>
 
 <template>
@@ -99,7 +105,11 @@ function addRole() {
     <el-table-column label="账号" prop="account"></el-table-column>
     <el-table-column label="用户昵称" prop="userName"></el-table-column>
     <el-table-column label="手机号" prop="mobile"></el-table-column>
-    <el-table-column label="角色集" prop="roleIds"></el-table-column>
+    <el-table-column label="角色集" prop="roleIds">
+      <template #default="{ row }">
+        <span>{{ roleList.filter(role => row.roleIds.includes(role.value)).map(role => role.label) }}</span>
+      </template>
+    </el-table-column>
     <el-table-column label="状态" prop="status">
       <template #default="{ row }">
         <el-switch 
