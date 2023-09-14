@@ -37,7 +37,7 @@ function delRow(raw: any) {
   }).then(async () => {
     deleteRoleLoading = true;
     await API.post({
-      url: "/admin/sys/role/deleteRole",
+      url: "/admin/sys/user/deleteUser",
       data: {
         id: raw.id,
       },
