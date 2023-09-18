@@ -99,6 +99,7 @@ import { useUserStore } from "@/store/modules/user";
 // API依赖
 import { LocationQuery, LocationQueryValue, useRoute } from "vue-router";
 import { CaptchaResult, LoginData } from "@/types/account";
+import { encrypt } from '@/utils';
 
 const userStore = useUserStore();
 const route = useRoute();
@@ -127,7 +128,7 @@ const loginFormRef = ref(ElForm);
 
 const loginData = reactive<LoginData>({
   account: "admin",
-  passWord: "123456",
+  passWord: "Aa123456",
   captchaId: undefined,
   verifyCode: undefined,
 });
@@ -184,7 +185,7 @@ function handleLogin() {
     if (valid) {
       try {
         loading.value = true;
-        await userStore.login(loginData);
+        await userStore.login(encrypt(JSON.stringify(loginData)));
         const query: LocationQuery = route.query;
         const redirect = (query.redirect as LocationQueryValue) ?? "/";
         const otherQueryParams = Object.keys(query).reduce(

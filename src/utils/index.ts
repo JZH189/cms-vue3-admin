@@ -1,3 +1,6 @@
+export * from "./encrypto"
+export * from "./hasPermission";
+
 /**
  * Check if an element has a class
  * @param {HTMLElement} ele
@@ -41,3 +44,4 @@ export function isExternal(path: string) {
 export function isProdMode() {
   return import.meta.env.MODE === "production";
 }
+
