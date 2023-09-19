@@ -8,6 +8,7 @@ import type {
   AxiosResponse,
   AxiosError,
 } from "axios";
+import { genSign } from "./genSign";
 
 type Result<T = any> = {
   msg: string;
@@ -15,7 +16,11 @@ type Result<T = any> = {
   data?: T;
 };
 
-function showConfirm(message: string, showCancelButton = false, needReload = false) {
+function showConfirm(
+  message: string,
+  showCancelButton = false,
+  needReload = false
+) {
   ElMessageBox.confirm(message, "提示", {
     confirmButtonText: "确定",
     showCancelButton: false,
@@ -27,7 +32,7 @@ function showConfirm(message: string, showCancelButton = false, needReload = fal
     if (needReload) {
       localStorage.clear();
       window.location.href = "/";
-    } 
+    }
   });
 }
 
@@ -53,6 +58,10 @@ export default class Request {
   private httpInterceptorsRequest() {
     this.instance.interceptors.request.use(
       (config: InternalAxiosRequestConfig) => {
+        if (config.data) {
+          //请求headers加签名
+          config.headers.sign = genSign(config.data);
+        }
         const userStore = useUserStoreHook();
         if (userStore.token) {
           config.headers.Authorization = userStore.token;
