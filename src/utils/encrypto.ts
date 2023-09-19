@@ -1,5 +1,6 @@
 import JSEncrypt from "jsencrypt";
 import * as CryptoJS from "crypto-js";
+import { generateRandomStr } from "./generateRandomStr";
 
 interface Idecrypt {
   encryptedKey: string; //加密后的秘钥
@@ -11,19 +12,6 @@ const publicKey =
 // 使用RSA公钥
 const crypt = new JSEncrypt();
 crypt.setPublicKey(publicKey);
-
-//生成指定长度随机字符串
-function generateRandomStr(strLength = 16) {
-  let code = "";
-  const chars = "abcdefghijkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789";
-  const charsArr = chars.split("");
-
-  for (let i = 0; i < strLength; i++) {
-    const num = Math.floor(Math.random() * charsArr.length);
-    code += charsArr[num];
-  }
-  return code;
-}
 
 /**
  * 加密方法
