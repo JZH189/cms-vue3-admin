@@ -99,7 +99,6 @@ import { useUserStore } from "@/store/modules/user";
 // API依赖
 import { LocationQuery, LocationQueryValue, useRoute } from "vue-router";
 import { CaptchaResult, LoginData } from "@/types/account";
-import { encrypt } from '@/utils';
 
 const userStore = useUserStore();
 const route = useRoute();
@@ -185,7 +184,7 @@ function handleLogin() {
     if (valid) {
       try {
         loading.value = true;
-        await userStore.login(encrypt(JSON.stringify(loginData)));
+        await userStore.login(loginData);
         const query: LocationQuery = route.query;
         const redirect = (query.redirect as LocationQueryValue) ?? "/";
         const otherQueryParams = Object.keys(query).reduce(
@@ -278,10 +277,10 @@ onMounted(() => {
 
     .el-input__inner {
       color: #fff;
+      caret-color: #fff;
       background: transparent;
       border: 0;
       border-radius: 0;
-      caret-color: #fff;
 
       &:-webkit-autofill {
         box-shadow: 0 0 0 1000px transparent inset !important;
@@ -293,7 +292,9 @@ onMounted(() => {
       &:-webkit-autofill:hover,
       &:-webkit-autofill:focus,
       &:-webkit-autofill:active {
-        transition: color 99999s ease-out, background-color 99999s ease-out;
+        transition:
+          color 99999s ease-out,
+          background-color 99999s ease-out;
         transition-delay: 99999s;
       }
     }
