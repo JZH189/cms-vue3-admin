@@ -211,7 +211,7 @@ onMounted(() => {
   getTableHeight();
   //初始化请求
   doSearch(getFormData());
-});
+  });
 </script>
 
 <style lang="scss" scoped>

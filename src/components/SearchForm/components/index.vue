@@ -65,7 +65,7 @@ function initFormFields(data: any[]) {
       [item.key]: typeof item.value !== 'undefined' ? item.value : needArr(item) ? [] : undefined,
     });
   });
-  //初始化form
+//初始化form
   Object.assign(form, initForm);
 }
 
@@ -76,10 +76,41 @@ watch(
   },
   {
     immediate: true,
+    deep: true,
   }
 );
 
 const columnLayout = computed(() => props.layout === FormItemLayout.column);
+
+//删除form中重复的key
+function removeRepeatKey() {
+  const twoKeys: any[] = Object.keys(form).filter(key => key.match(/(\S+)\,(\S+)/))
+  if (twoKeys.length) {
+    twoKeys.forEach(item => {
+      const mapKeyList = item.split(',')
+      mapKeyList.forEach(key => {
+        Reflect.deleteProperty(form, key)
+      })
+    })
+  }
+}
+
+function getValidatorVal() {
+  let formData: any = {}
+  removeRepeatKey()
+  const formVal = toRaw(form)
+  Object.keys(formVal).forEach(key => {
+    const matchRes = key.match(/(\S+)\,(\S+)/)
+    if (matchRes) {
+      //处理formItem.key为数组的情况
+      formData[matchRes[1]] = formVal?.[key]?.[0]
+      formData[matchRes[2]] = formVal?.[key]?.[1]
+    } else {
+      formData[key] = formVal?.[key]
+    }
+  })
+  return formData;
+}
 
 /**
  * 提交表单
@@ -88,7 +119,7 @@ async function submitForm() {
   if (!searchFormRef.value) return false;
   await searchFormRef.value.validate(async (valid) => {
     if (valid) {
-      emit("onSearch", toRaw(form));
+      emit("onSearch", getValidatorVal());
     }
   });
 }
@@ -100,7 +131,7 @@ async function resetForm() {
   searchFormRef.value.resetFields();
   //初始化form
   Object.assign(form, initForm);
-  emit("onReset", toRaw(form));
+  emit("onReset", getValidatorVal());
 }
 
 const treeRef = ref()
@@ -119,7 +150,7 @@ const getCheckedKeys = () => {
 }
 
 defineExpose({
-  formData: toRaw(form),
+  formData: getValidatorVal(),
   submitForm,
   resetForm,
   setCheckedKeys,
