@@ -134,19 +134,36 @@ async function resetForm() {
   emit("onReset", getValidatorVal());
 }
 
+function clearSelected(key) {
+  Object.assign(form, {
+    [key]: undefined,
+  });
+}
+
 const treeRef = ref()
 
+/* 设置目前选中的节点，使用此方法必须设置 node-key 属性 */
 const setCheckedKeys = (keys: number[]) => {
   if(!treeRef.value) return 
   treeRef.value[0]!.setCheckedKeys(keys, false)
 }
+
+/* 清空选中的节点 */
 const resetChecked = () => {
   if(!treeRef.value) return 
   treeRef.value[0]!.setCheckedKeys([], false)
 }
+
+/* 返回当前选中节点 key 的数组 */
 const getCheckedKeys = () => {
   if(!treeRef.value) return 
   return treeRef.value[0]!.getCheckedKeys(false)
+}
+
+/* 返回当前半选中节点 key 的数组 */
+const getHalfCheckedKeys = () => {
+  if(!treeRef.value) return 
+  return treeRef.value[0]!.getHalfCheckedKeys(false)
 }
 
 defineExpose({
@@ -155,7 +172,8 @@ defineExpose({
   resetForm,
   setCheckedKeys,
   resetChecked,
-  getCheckedKeys
+  getCheckedKeys,
+  getHalfCheckedKeys,
 });
 </script>
 
@@ -229,6 +247,7 @@ defineExpose({
             v-model="form[key]"
             :clearable="!attrs?.disabled"
             v-bind="attrs"
+            @clear="clearSelected(key)"
           >
             <el-option
               v-for="opt in opts"
