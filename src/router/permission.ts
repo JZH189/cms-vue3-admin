@@ -51,18 +51,25 @@ function routeRemoveIllegalFilter(menu: Menu): boolean {
  * @param userStore
  */
 async function getAsyncRoute(userStore: any) {
-  const { menus } = await userStore.getPermmenu();
-  // 过滤不合法的路由，避免不合法路径导致vue-router进入死循环
-  let menusTree = filter(menus, routeRemoveIllegalFilter);
-  // list to tree
-  menusTree = listToTree(menusTree);
-  //转成真实路由对象
-  const asyncRoutes = transformMenuToRoute(menusTree);
-  //保存路由信息
-  permissionStore.setRoutes(asyncRoutes);
-  asyncRoutes.forEach((route) => {
-    router.addRoute(route);
-  });
+  return new Promise<void>(async (resolve, reject) => {
+    const { menus } = await userStore.getPermmenu();
+    if (menus.length <= 0) {
+      reject('当前用户未绑定菜单权限')
+      return 
+    }
+    // 过滤不合法的路由，避免不合法路径导致vue-router进入死循环
+    let menusTree = filter(menus, routeRemoveIllegalFilter);
+    // list to tree
+    menusTree = listToTree(menusTree);
+    //转成真实路由对象
+    const asyncRoutes = transformMenuToRoute(menusTree);
+    //保存路由信息
+    permissionStore.setRoutes(asyncRoutes);
+    asyncRoutes.forEach((route) => {
+      router.addRoute(route);
+    });
+    resolve()
+  })
 }
 
 router.beforeEach(async (to, from, next) => {
@@ -89,6 +96,7 @@ router.beforeEach(async (to, from, next) => {
           await getAsyncRoute(userStore);
           next({ ...to, replace: true });
         } catch (error) {
+          await ElMessageBox.confirm(String(error));
           // 移除 token 并跳转登录页
           await userStore.resetToken();
           next(`/login?redirect=${to.path}`);
