@@ -95,7 +95,7 @@ function showSidebar() {
         </div>
         <template #dropdown>
           <el-dropdown-menu>
-            <router-link to="/system/account">
+            <router-link to="/account">
               <el-dropdown-item>个人信息</el-dropdown-item>
             </router-link>
             <el-dropdown-item divided @click="logout"

@@ -49,6 +49,24 @@ export const constantRoutes: RouteRecordRaw[] = [
       },
     ],
   },
+  {
+    path: "/user",
+    component: Layout,
+    meta: { hidden: true },
+    children: [
+      {
+        path: "/account",
+        name: "account",
+        component: () => import("@/views/user/account/index.vue"),
+        meta: {
+          title: "个人信息",
+          icon: "carbon:ibm-cloud-hyper-protect-crypto-services",
+          affix: true,
+          hidden: true,
+        },
+      },
+    ],
+  },
   // 外部链接
   /*{
         path: '/external-link',
